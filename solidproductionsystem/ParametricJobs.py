@@ -13,3 +13,4 @@ class SolidParametricJobs(ParametricJobs):
     saffron2_output_lfn = Column(TEXT, allowed=True)
     seed = Column(Integer, allowed=True)
     jobnumber_start = Column(Integer, allowed=True)
+    day = Column(TEXT, allowed=True)
