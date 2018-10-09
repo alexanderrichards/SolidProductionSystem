@@ -8,13 +8,7 @@ setup(
     install_requires=['productionsystem @ git+https://github.com/alexanderrichards/ProductionSystem.git'],
     entry_points={
         'dbmodels': ['parametricjobs = solid.ParametricJobs:SolidParametricJobs'],
-#                     'requests = productionsystem.sql.models.Requests:Requests'],
-#        'webapp.services': ['htmlpageserver = productionsystem.webapp.services.HTMLPageServer:HTMLPageServer'],
-        'webapp.streams': ['newrequest = solid.resource_utils:newrequest_streams'],
-        'monitoring.dirac': ['jobfactory = solid.jobfactory:jobfactory'],
-        'webapp': [
-            'jinja2_loader = solid.webapp:solid_loader',
-            'daemon = solid.WebApp:SolidWebApp']
+        'webapp': ['jinja2_loader = solid.webapp:solid_jinja2_loader']
     },
     # metadata for upload to PyPI
     author="Alexander Richards",
