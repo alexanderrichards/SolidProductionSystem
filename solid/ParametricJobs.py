@@ -17,6 +17,7 @@ class SolidParametricJobs(ParametricJobs):
     saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
+    analysis_inputfile = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
 

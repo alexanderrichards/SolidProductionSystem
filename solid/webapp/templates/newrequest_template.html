@@ -135,11 +135,18 @@
 	  </label>
 	</div>
 
+	<br>
+	<label for="analysis_inputfile">Inputfile:</label>
 	<div class="input-group">
 	  <div class="input-group-addon">
 	    <span class="glyphicon glyphicon-th"></span>
 	  </div>
 	  <input id="daterangepicker" name="days" type="text" class="form-control togglable" toggle="reduction_toggle" disabled>
+	</div>
+
+	<br>
+	<div class="input-group">
+	  <input type="file" class="form-control togglable" toggle="reduction_toggle" name="analysis_inputfile" id="analysis_inputfile" disabled>
 	</div>
 
       </div>
@@ -273,7 +280,27 @@ $(document).ready(function() {
 	    form_data[mapping.name] = mapping.value;
 	});
 
+
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            var f = $("#analysis_inputfile").prop("files")[0];
+            if (f){
+               var r = new FileReader();
+               r.onload = function(e) {
+                  form_data["analysis_inputfile"] = e.target.result;
+               }
+               r.readAsText(f);
+            }
+            else{
+               bootstrap_alert("danger", "ERROR:", "Couldn't find file.");
+            }
+        } else {
+          bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+        }
+
+        
 	var data = {"request":{"description": "new request"}, "parametricjobs": []};
+
 /*	var run = 3;
 	var num_jobs = 180;
 	if (form_data["solidsim_inputfiletype"] == "muons-reduced"){
@@ -288,7 +315,8 @@ $(document).ready(function() {
 					 "solidsim_output_lfn": form_data["solidsim_output_lfn"],
 					 "seed": 310 + ((run-1) * 5) + (i+1),
 //					 "jobnumber_start": run * 900 + (i*num_jobs)})
-					 "jobnumber_start": run * 900 + (i*2)})
+			                 "jobnumber_start": run * 900 + (i*2),
+			                 "analysis_inputfile": form_data["analysis_inputfile"]})
 	}
 */
 	var days = form_data["days"].split(" - ");
@@ -301,7 +329,7 @@ $(document).ready(function() {
 	    data["parametricjobs"].push({"num_jobs": 2,
 					 "day": d.toISOString().split("T")[0]});
 	}
-	$.ajax({url: "/requests",
+	$.ajax({url: "/api/requests",
 		type: "POST",
 		data: JSON.stringify(data),
 		contentType: "application/json; charset=utf-8",
