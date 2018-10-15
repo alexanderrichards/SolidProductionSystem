@@ -2,17 +2,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="solidproductionsystem",
+    name="solid",
     version="0.1",
     packages=find_packages(),
-    install_requires=['productionsystem'],
+    install_requires=['productionsystem @ git+https://github.com/alexanderrichards/ProductionSystem.git'],
     entry_points={
-        'dbmodels': ['parametricjobs = solidproductionsystem.ParametricJobs:SolidParametricJobs'],
-#                     'requests = productionsystem.sql.models.Requests:Requests'],
-#        'webapp.services': ['htmlpageserver = productionsystem.webapp.services.HTMLPageServer:HTMLPageServer'],
-        'webapp.streams': ['newrequest = solidproductionsystem.resource_utils:newrequest_streams'],
-        'monitoring.dirac': ['jobfactory = solidproductionsystem.jobfactory:jobfactory'],
-        'daemons': ['webapp = solidproductionsystem.WebApp:SolidWebApp']
+        'dbmodels': ['parametricjobs = solid.ParametricJobs:SolidParametricJobs'],
+        'webapp': ['jinja2_loader = solid.webapp:solid_jinja2_loader']
     },
     # metadata for upload to PyPI
     author="Alexander Richards",
@@ -20,5 +16,5 @@ setup(
     description="Solid Production System Plugin",
     license="MIT",
     keywords="production",
-    url="https://github.com/alexanderrichards/ProductionSystem"
+    url="https://github.com/alexanderrichards/SolidProductionSystem"
 )

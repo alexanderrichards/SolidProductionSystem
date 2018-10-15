@@ -1,0 +1,321 @@
+{% extends "productionsystem/newrequest_template.html"%}
+
+{% block css_links %}
+{{ super() }}
+<!-- TiTaToggle -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/titatoggle/2.1.2/titatoggle-dist-min.css" integrity="sha256-MSuL2HDBiBhNtoZ7N4IemvaGhTuEcanpxDHuQY+ju0Y=" crossorigin="anonymous"/>
+<!-- Date range picker CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+.macro-selection {width: 100%;
+                  overflow-x:auto;
+                  overflow-y:auto;
+                  overflow: -moz-scrollbars-horizontal;}
+.required {color: red;
+           font-weight: bold;}
+</style>
+{% endblock %}
+
+{% block js_imports %}
+{{ super() }}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+{% endblock %}
+
+{% block form_content %}
+    <legend>Solid Job Setup</legend>
+    <!-- Tabs -->
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+	<a class="nav-item nav-link active" id="nav-simulation-tab" data-toggle="tab" href="#nav-simulation" role="tab" aria-controls="nav-simulation" aria-selected="true">Simulation</a>
+	<a class="nav-item nav-link" id="nav-ro-tab" data-toggle="tab" href="#nav-ro" role="tab" aria-controls="nav-ro" aria-selected="false">RO</a>
+	<a class="nav-item nav-link" id="nav-analysis-tab" data-toggle="tab" href="#nav-analysis" role="tab" aria-controls="nav-analysis" aria-selected="false">Analysis</a>
+      </div>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="nav-tabContent">
+
+      <!-- Simulation -->
+      <div class="tab-pane fade show active" id="nav-simulation" role="tabpanel" aria-labelledby="nav-simulation-tab">
+	<br>
+	<div class="checkbox checkbox-slider-info checkbox-slider--b">
+	  <label>
+	    <input type="checkbox" class="toggle" id="sim_toggle" checked/>&nbsp;
+	    <span class="indicator-primary">
+              <span class="oi oi-power-standby text-primary"></span>
+              ON / OFF
+            </span>
+	  </label>
+	</div>
+
+	<br>
+        <label for="solidsim_version">Select SolidSim Version:</label>
+        <div class="input-group">
+	  <select id="solidsim_version" name="solidsim_version" class="selectpicker form-control togglable" toggle="sim_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="180px" data-dropup-auto="false" data-live-search-placeholder="Search..." title="SolidSim Version" required>
+	  </select>
+        </div>
+
+	<br>
+	<label for="solidsim_nevents">NEvents:</label>
+	<div class="input-group">
+	  <input id="solidsim_nevents" name="num_jobs" placeholder="Number of events" class="form-control togglable" toggle="sim_toggle" type="text" required/>
+	</div>
+
+	<br>
+	<label for="solidsim_macro">SolidSim Macro:</label>
+	<div class="input-group macro-selection">
+	  <select id="solidsim_macro"  name="solidsim_macro", class="selectpicker form-control togglable" toggle="sim_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required>
+	  </select>
+	</div>
+
+	<br>
+	<label for="solidsim_inputfiletype">SolidSim Input File Type:</label>
+	<div class="input-group">
+	  <span class="input-group-addon" id="basic-addon1">
+	    <input type="checkbox" class="toggle togglable" toggle="sim_toggle" id="solidsim_inputfiletype_toggle"/>
+	  </span>
+
+	  <select id="solidsim_inputfiletype" name="solidsim_inputfiletype" class="selectpicker form-control togglable" toggleoff="sim_toggle" toggle="solidsim_inputfiletype_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="100%" data-dropup-auto="false" data-live-search-placeholder="Search..." title="SolidSim input file type" required disabled>
+	    <option>atm-n</option>
+	    <option>muons-reduced</option>
+	    <option>IBD</option>
+	  </select>
+	  <!--<input id="solidsim_inputfile_lfn" name="solidsim_inputfile_lfn" toggleoff="sim_toggle" toggle="solidsim_inputfile_lfn_toggle" type="text" class="form-control togglable" placeholder="SolidSim input file LFN" aria-describedby="basic-addon1" required disabled>-->
+	</div>
+
+	<br>
+	<label for="solidsim_output_lfn">SolidSim Output LFN:</label>
+	<div class="input-group">
+	  <input id="solidsim_output_lfn" name="solidsim_output_lfn" toggle="sim_toggle" type="text" class="form-ontrol togglable" placeholder="SolidSim output LFN" aria-describedby="basic-addon1" required/>
+	</div>
+
+      </div>
+
+      <!-- RO -->
+      <div class="tab-pane fade" id="nav-ro" role="tabpanel" aria-labelledby="nav-ro-tab">
+
+	<br>
+	<div class="checkbox checkbox-slider-info checkbox-slider--b">
+	  <label>
+	    <input type="checkbox" class="toggle" id="ro_toggle"/>&nbsp;
+	    <span class="indicator-primary">
+              <span class="oi oi-power-standby text-primary"></span>
+              ON / OFF
+            </span>
+	  </label>
+	</div>
+
+	<br>
+	<label for="saffron2_ro_version">Select Saffron2 RO Version:</label>
+	<div class="input-group">
+	  <select id="saffron2_ro_version" name="saffron2_ro_version" class="selectpicker form-control togglable" toggle="ro_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="180px" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Saffron2 RO Version" required disabled>
+	  </select>
+	</div>
+
+	<br>
+	<label for="saffron2_output_lfn">Saffron2 RO Output LFN:</label>
+	<div class="input-group">
+	  <input id="saffron2_output_lfn" name="saffron2_output_lfn" toggle="ro_toggle" type="text" class="form-ontrol togglable" placeholder="Saffron2 RO output LFN" aria-describedby="basic-addon1" required disabled/>
+	</div>
+
+      </div>
+
+      <!-- Analysis -->
+      <div class="tab-pane fade" id="nav-analysis" role="tabpanel" aria-labelledby="nav-analysis-tab">
+
+	<br>
+	<div class="checkbox checkbox-slider-info checkbox-slider--b">
+	  <label>
+	    <input type="checkbox" class="toggle" id="reduction_toggle"/>&nbsp;
+	    <span class="indicator-primary">
+              <span class="oi oi-power-standby text-primary"></span>
+              ON / OFF
+            </span>
+	  </label>
+	</div>
+
+	<div class="input-group">
+	  <div class="input-group-addon">
+	    <span class="glyphicon glyphicon-th"></span>
+	  </div>
+	  <input id="daterangepicker" name="days" type="text" class="form-control togglable" toggle="reduction_toggle" disabled>
+	</div>
+
+      </div>
+    </div>
+
+{% endblock %}
+
+
+{% block document_ready_js %}
+$(document).ready(function() {
+
+    $('#daterangepicker').daterangepicker({
+	"showDropdowns": true,
+	ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+	},
+	"locale": {
+            "format": "YYYY-MM-DD",
+            "separator": " - ",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+            "fromLabel": "From",
+            "toLabel": "To",
+            "customRangeLabel": "Custom",
+            "weekLabel": "W",
+            "daysOfWeek": [
+		"Su",
+		"Mo",
+		"Tu",
+		"We",
+		"Th",
+		"Fr",
+		"Sa"
+            ],
+            "monthNames": [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
+            ],
+            "firstDay": 1
+	},
+    }, function(start, end, label) {
+	console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    });
+
+
+    $(".toggle").change(function(){
+	$(".togglable[toggle~='" + this.id + "']").prop("disabled", !this.checked);
+	$("select[toggle='" + this.id + "']").selectpicker("refresh");
+	if (!this.checked){
+	    $(".togglable[toggleoff~='" + this.id + "']").prop("disabled", true);    
+	}
+	else if (this.checked){
+	    $(".togglable[toggleon~='" + this.id + "']").prop("disabled", false);    
+	}
+    });
+    $.ajax({url: "/cvmfs/solidexperiment.egi.eu/el6/SolidSim",
+            type: "POST",
+	    data: JSON.stringify({"regex": "[vV].*", "type": "dirs"}),
+	    contentType: "application/json; charset=utf-8",
+	    error: function(request, status, error){
+		console.warn(`Error getting SolidSim version!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request))
+		parent.bootstrap_alert("Attention!", `Error getting SolidSim version! status: ${status} error: ${error}`, "alert-danger");
+	    },
+            success: function(result) {
+		console.log("successfully got SolidSim versions.");
+		$.each(result, function(index, value){
+		    $("#solidsim_version").append(`<option>${value}</option>`)
+		});
+//                $("#solidsim_version").html(result);
+                $("#solidsim_version").selectpicker("refresh");
+            }
+	   });
+    $.ajax({url: "/cvmfs/solidexperiment.egi.eu/el6/saffron2",
+            type: "POST",
+	    data: JSON.stringify({"regex": "[vV].*", "type": "dirs"}),
+	    contentType: "application/json; charset=utf-8",
+	    error: function(request, status, error){
+		console.warn(`Error getting saffron2 version!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request))
+		parent.bootstrap_alert("Attention!", `Error getting saffron2 version! status: ${status} error: ${error}`, "alert-danger");
+	    },
+            success: function(result) {
+		console.log("Successfully got saffron2 versions.");
+		$.each(result, function(index, value){
+		    $("#saffron2_ro_version").append(`<option>${value}</option>`)
+		});
+//                $("#saffron2_ro_version").html(result);
+                $("#saffron2_ro_version").selectpicker("refresh");
+            }
+	   });
+    $("#solidsim_version").change(function() {
+//	var solidsim_macro = $("#solidsim_macro");
+	var solidsim_version = $("#solidsim_version option:selected").text();
+	$.ajax({url: `/cvmfs/solidexperiment.egi.eu/el6/SolidSim/${solidsim_version}/solid_g4_sim/input_macros`,
+		type: "POST",
+		data: JSON.stringify({"regex": ".*", "type": "files"}),
+		contentType: "application/json; charset=utf-8",
+		error: function(request, status, error){
+		    console.warn(`Error getting macros!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request))
+		    parent.bootstrap_alert("Attention!", `Error getting macros! status: ${status} error: ${error}`, "alert-danger");
+		},
+		success: function(result) {
+		    console.log("Successfully got SolidSim macros.");
+		    $.each(result, function(index, value){
+			$("#solidsim_macro").append(`<option>${value}</option>`)
+		    });
+//                    solidsim_macro.html(result);
+                    $("#solidsim_macro").selectpicker("refresh");
+                }
+               });
+    });
+
+    $("form").submit(function(event){
+	event.preventDefault();  // prevent default submission as doesn't create json content.
+	var form_data = new Object();
+	$.each($(this).serializeArray(), function(index, mapping){
+	    form_data[mapping.name] = mapping.value;
+	});
+
+	var data = {"request":{"description": "new request"}, "parametricjobs": []};
+/*	var run = 3;
+	var num_jobs = 180;
+	if (form_data["solidsim_inputfiletype"] == "muons-reduced"){
+	    num_jobs = 100;
+	}
+//	for (var i=0; i<5; i++){
+	for (var i=0; i<2; i++){
+	    data["parametricjobs"].push({"num_jobs": 2,//num_jobs,
+                        		 "solidsim_version": form_data["solidsim_version"],
+					 "solidsim_macro": form_data["solidsim_macro"],
+					 "solidsim_inputfiletype": form_data["solidsim_inputfiletype"],
+					 "solidsim_output_lfn": form_data["solidsim_output_lfn"],
+					 "seed": 310 + ((run-1) * 5) + (i+1),
+//					 "jobnumber_start": run * 900 + (i*num_jobs)})
+					 "jobnumber_start": run * 900 + (i*2)})
+	}
+*/
+	var days = form_data["days"].split(" - ");
+	var from_date = new Date(days[0]);
+	var to_date = new Date(days[1]);
+	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
+	for (var i=0; i<(ndays+1); i++){
+	    var d = new Date();
+	    d.setDate(from_date.getDate() + i);
+	    data["parametricjobs"].push({"num_jobs": 2,
+					 "day": d.toISOString().split("T")[0]});
+	}
+	$.ajax({url: "/requests",
+		type: "POST",
+		data: JSON.stringify(data),
+		contentType: "application/json; charset=utf-8",
+		error: function(request, status, error){
+		    console.warn(`Error submitting request!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request));
+		    parent.bootstrap_alert("Attention!", `Error submitting request! status: ${status} error: ${error}`, "alert-danger");
+		},
+		success: function(result){
+		    console.log("Successfully posted request.");
+		    parent.bootstrap_alert("Success!", "Request added", "alert-success");
+		}
+	       });
+	parent.$.fancybox.close();
+    });
+
+});
+{% endblock %}

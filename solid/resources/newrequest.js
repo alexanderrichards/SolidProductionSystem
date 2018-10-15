@@ -1,4 +1,54 @@
 $(document).ready(function() {
+
+    $('#daterangepicker').daterangepicker({
+	"showDropdowns": true,
+	ranges: {
+            'Today': [moment(), moment()],
+            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+	},
+	"locale": {
+            "format": "YYYY-MM-DD",
+            "separator": " - ",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+            "fromLabel": "From",
+            "toLabel": "To",
+            "customRangeLabel": "Custom",
+            "weekLabel": "W",
+            "daysOfWeek": [
+		"Su",
+		"Mo",
+		"Tu",
+		"We",
+		"Th",
+		"Fr",
+		"Sa"
+            ],
+            "monthNames": [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
+            ],
+            "firstDay": 1
+	},
+    }, function(start, end, label) {
+	console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    });
+
+
     $(".toggle").change(function(){
 	$(".togglable[toggle~='" + this.id + "']").prop("disabled", !this.checked);
 	$("select[toggle='" + this.id + "']").selectpicker("refresh");
@@ -73,7 +123,7 @@ $(document).ready(function() {
 	});
 
 	var data = {"request":{"description": "new request"}, "parametricjobs": []};
-	var run = 3;
+/*	var run = 3;
 	var num_jobs = 180;
 	if (form_data["solidsim_inputfiletype"] == "muons-reduced"){
 	    num_jobs = 100;
@@ -89,7 +139,17 @@ $(document).ready(function() {
 //					 "jobnumber_start": run * 900 + (i*num_jobs)})
 					 "jobnumber_start": run * 900 + (i*2)})
 	}
-	
+*/
+	var days = form_data["days"].split(" - ");
+	var from_date = new Date(days[0]);
+	var to_date = new Date(days[1]);
+	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
+	for (var i=0; i<(ndays+1); i++){
+	    var d = new Date();
+	    d.setDate(from_date.getDate() + i);
+	    data["parametricjobs"].push({"num_jobs": 2,
+					 "day": d.toISOString().split("T")[0]});
+	}
 	$.ajax({url: "/requests",
 		type: "POST",
 		data: JSON.stringify(data),
