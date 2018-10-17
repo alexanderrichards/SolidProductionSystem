@@ -2,13 +2,12 @@
 
 jobnumber=$1
 inputfile=$2
-DAY=$3
 Version=v1.21
 Patch=patch4
 echo -e "arguments="
 echo $jobnumber
 echo $inputfile
-echo $DAY
+echo {{ day }}
 echo $Version
 echo $Patch
 
@@ -72,9 +71,9 @@ echo $runNUMBER
 /cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
 
-dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/${DAY}/${Version}/${Patch}/histos/S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
-dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/${DAY}/${Version}/${Patch}/ntuples/S2-tuple_${jobnumber}_$runNUMBER.root S2-tuple.root UKI-LT2-IC-HEP-disk
-dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/${DAY}/${Version}/${Patch}/logs/log_${jobnumber}_$runNUMBER.txt log.txt UKI-LT2-IC-HEP-disk
+dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/{{ day }}/${Version}/${Patch}/histos/S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
+dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/{{ day }}/${Version}/${Patch}/ntuples/S2-tuple_${jobnumber}_$runNUMBER.root S2-tuple.root UKI-LT2-IC-HEP-disk
+dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/{{ day }}/${Version}/${Patch}/logs/log_${jobnumber}_$runNUMBER.txt log.txt UKI-LT2-IC-HEP-disk
 
 #dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/test/test_grid/S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
 #dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/test/test_grid/S2_${jobnumber}_$runNUMBER.root S2-tuple.root UKI-LT2-IC-HEP-disk

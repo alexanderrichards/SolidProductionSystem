@@ -70,6 +70,12 @@
 	</div>
 
 	<br>
+	<label for="solidsim_inputmacro">Input Macro:</label>
+	<div class="input-group">
+	  <input type="file" class="form-control togglable" toggle="sim_toggle" name="solidsim_inputmacro" id="solidsim_inputmacro">
+	</div>
+
+	<br>
 	<label for="solidsim_inputfiletype">SolidSim Input File Type:</label>
 	<div class="input-group">
 	  <span class="input-group-addon" id="basic-addon1">
@@ -79,7 +85,7 @@
 	  <select id="solidsim_inputfiletype" name="solidsim_inputfiletype" class="selectpicker form-control togglable" toggleoff="sim_toggle" toggle="solidsim_inputfiletype_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="100%" data-dropup-auto="false" data-live-search-placeholder="Search..." title="SolidSim input file type" required disabled>
 	    <option>atm-n</option>
 	    <option>muons-reduced</option>
-	    <option>IBD</option>
+	    <option>BiPo</option>
 	  </select>
 	  <!--<input id="solidsim_inputfile_lfn" name="solidsim_inputfile_lfn" toggleoff="sim_toggle" toggle="solidsim_inputfile_lfn_toggle" type="text" class="form-control togglable" placeholder="SolidSim input file LFN" aria-describedby="basic-addon1" required disabled>-->
 	</div>
@@ -136,7 +142,7 @@
 	</div>
 
 	<br>
-	<label for="analysis_inputfile">Inputfile:</label>
+	<label for="daterangepicker">Date:</label>	
 	<div class="input-group">
 	  <div class="input-group-addon">
 	    <span class="glyphicon glyphicon-th"></span>
@@ -145,8 +151,9 @@
 	</div>
 
 	<br>
+	<label for="analysis_inputmacro">Input Macro:</label>
 	<div class="input-group">
-	  <input type="file" class="form-control togglable" toggle="reduction_toggle" name="analysis_inputfile" id="analysis_inputfile" disabled>
+	  <input type="file" class="form-control togglable" toggle="reduction_toggle" name="analysis_inputmacro" id="analysis_inputmacro" disabled>
 	</div>
 
       </div>
@@ -283,23 +290,51 @@ $(document).ready(function() {
 
         // Check for the various File API support.
         if (window.File && window.FileReader && window.FileList && window.Blob) {
-            var f = $("#analysis_inputfile").prop("files")[0];
+            var f = $("#analysis_inputmacro").prop("files")[0];
             if (f){
                var r = new FileReader();
                r.onload = function(e) {
-                  form_data["analysis_inputfile"] = e.target.result;
+                  form_data["analysis_inputmacro"] = e.target.result;
                }
                r.readAsText(f);
             }
             else{
-               bootstrap_alert("danger", "ERROR:", "Couldn't find file.");
+               bootstrap_alert("warning", "ERROR:", "Couldn't find file.");
             }
+
+            var g = $("#solidsim_inputmacro").prop("files")[0];
+            if (g){
+               var r = new FileReader();
+               r.onload = function(e) {
+                  form_data["solidsim_inputmacro"] = e.target.result;
+               }
+               r.readAsText(g);
+            }
+            else{
+               bootstrap_alert("warning", "ERROR:", "Couldn't find file.");
+            }
+
         } else {
           bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
         }
 
         
-	var data = {"request":{"description": "new request"}, "parametricjobs": []};
+	var data = {"request":{"description": "new request", "parametricjobs": []}};
+
+	if ($("#reduction_toggle").prop("checked")){
+	    var days = form_data["days"].split(" - ");
+	    var from_date = new Date(days[0]);
+	    var to_date = new Date(days[1]);
+	    var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
+	    for (var i=0; i<(ndays+1); i++){
+		var d = new Date(from_date.valueOf());
+		d.setDate(from_date.getDate() + i);
+		data["request"]["parametricjobs"].push({"num_jobs": 1, // Temporary as num_jobs determined at submission time.
+							"analysis_inputmacro": form_data.analysis_inputmacro || '',
+							"day": d.toISOString().split("T")[0]});
+	    }
+	    
+	}
 
 /*	var run = 3;
 	var num_jobs = 180;
@@ -319,30 +354,22 @@ $(document).ready(function() {
 			                 "analysis_inputfile": form_data["analysis_inputfile"]})
 	}
 */
-	var days = form_data["days"].split(" - ");
-	var from_date = new Date(days[0]);
-	var to_date = new Date(days[1]);
-	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
-	for (var i=0; i<(ndays+1); i++){
-	    var d = new Date();
-	    d.setDate(from_date.getDate() + i);
-	    data["parametricjobs"].push({"num_jobs": 2,
-					 "day": d.toISOString().split("T")[0]});
-	}
+	parent.$.fancybox.close();
 	$.ajax({url: "/api/requests",
 		type: "POST",
 		data: JSON.stringify(data),
 		contentType: "application/json; charset=utf-8",
-		error: function(request, status, error){
-		    console.warn(`Error submitting request!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request));
-		    parent.bootstrap_alert("Attention!", `Error submitting request! status: ${status} error: ${error}`, "alert-danger");
+		error: function(jqXHR, testStatus, errorThrown){
+                    console.error(`Failed to create new requests.\n--------\nStatus: ${textStatus}\nError: ${errorThrown}\n--------\n${jqXHR.responseText}`);
+                    parent.bootstrap_alert("danger", "ERROR:", "Failed to create new requests!");
 		},
-		success: function(result){
-		    console.log("Successfully posted request.");
-		    parent.bootstrap_alert("Success!", "Request added", "alert-success");
+		success: function(response, status, request){
+                    console.log("Request created");
+                    parent.bootstrap_alert("success", "Success:", "Request added");
+                    parent.$("#requests_table").DataTable().ajax.reload();
 		}
 	       });
-	parent.$.fancybox.close();
+
     });
 
 });

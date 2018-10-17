@@ -11,20 +11,22 @@ class SolidParametricJobs(ParametricJobs):
     solidsim_version = SmartColumn(TEXT, allowed=True)
     solidsim_macro = SmartColumn(TEXT, allowed=True)
     solidsim_nevents = SmartColumn(Integer, allowed=True)
+    solidsim_inputmacro = SmartColumn(TEXT, allowed=True)
     solidsim_inputfiletype = SmartColumn(TEXT, allowed=True)
     solidsim_output_lfn = SmartColumn(TEXT, allowed=True)
     saffron2_ro_version = SmartColumn(TEXT, allowed=True)
     saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
-    analysis_inputfile = SmartColumn(TEXT, allowed=True)
+    analysis_inputmacro = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
 
     def _setup_dirac_job(self, job, tmp_runscript):
+        day = self.day
         runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                    .get_template("runscript.sh")\
-                                   .render()
+                                   .render(day=day.replace("-", "_"))
         tmp_runscript.write(runscript_template)
         tmp_runscript.flush()
 
@@ -48,19 +50,29 @@ class SolidParametricJobs(ParametricJobs):
 
         inputdata_lfns = []
         for filename in files.keys():
-            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
+            if not filename.endswith('.sbf'):
+                continue
+#            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
+            inputdata_lfns.append(os.path.join(directory_path, filename))
 
         job_numbers = range(len(inputdata_lfns))
         inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-        days = [self.day.replace("-", "_")] * len(inputdata_lfns)
+        self.num_jobs = len(inputdata_filenames)
+
+        inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.21/saffron2/ops/onlineMonitoringBR2.txt'
+        if self.analysis_inputmacro:
+            with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
+                tempmacro.write(self.analysis_inputmacro)
+            inputmacro = tempmacro.name
+
         job.setName("SoLid_data_%(jobno)s")
-        job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s %(day)s')
+        job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
         job.setPlatform('ANY')
-        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
-        job.setInputSandbox([tmp_runscript.name, '/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.21/saffron2/ops/onlineMonitoringBR2.txt'])
-        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
+#        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
+        job.setDestination('ANY')
+        job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
+#        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
         job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
         job.setParameterSequence('jobno', job_numbers, addToWorkflow=False)
         job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)
-        job.setParameterSequence('day', days, addToWorkflow=False)
         return job
