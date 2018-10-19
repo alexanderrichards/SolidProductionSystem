@@ -160,6 +160,13 @@
 	</div>
 
 	<br>
+	<label for="analysis_macro">Analysis Macro:</label>
+	<div class="input-group macro-selection">
+	  <select id="analysis_macro"  name="analysis_macro", class="selectpicker form-control togglable" toggle="reduction_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required disabled>
+	  </select>
+	</div>
+
+	<br>
 	<label for="analysis_inputmacro">Input Macro:</label>
 	<div class="input-group">
 	  <input type="file" class="form-control togglable" toggle="reduction_toggle" name="analysis_inputmacro" id="analysis_inputmacro" disabled>
@@ -262,13 +269,33 @@ $(document).ready(function() {
             success: function(result) {
 		console.log("Successfully got saffron2 versions.");
 		$.each(result, function(index, value){
-		    $("#saffron2_ro_version").append(`<option>${value}</option>`)
-		    $("#saffron2_analysis_version").append(`<option>${value}</option>`)
+		    $("#saffron2_ro_version").append(`<option>${value}</option>`);
+		    $("#saffron2_analysis_version").append(`<option>${value}</option>`);
 		});
+		$("#saffron2_analysis_version").trigger("change");
 //                $("#saffron2_ro_version").html(result);
 //                $("#saffron2_ro_version").selectpicker("refresh");
             }
 	   });
+    $("#saffron2_analysis_version").change(function() {	
+	var saffron2_version = $("#saffron2_analysis_version option:selected").text();
+	$.ajax({url: `/cvmfs/solidexperiment.egi.eu/el6/saffron2/${saffron2_version}/saffron2/ops`,
+		type: "POST",
+		data: JSON.stringify({"regex": ".*\.txt", "type": "files"}),
+		contentType: "application/json; charset=utf-8",
+		error: function(request, status, error){
+		    console.warn(`Error getting saffron2 version!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request))
+		    parent.bootstrap_alert("Attention!", `Error getting saffron2 version! status: ${status} error: ${error}`, "alert-danger");
+		},
+		success: function(result) {
+		    console.log("Successfully got saffron2 versions.");
+		    $("#analysis_macro").empty();
+		    $.each(result, function(index, value){
+			$("#analysis_macro").append(`<option>${value}</option>`);
+		    });
+		}
+	       });
+    });
 
     $("#solidsim_inputmacro").change(function(){
 	$("#solidsim_macro").prop("required", false);

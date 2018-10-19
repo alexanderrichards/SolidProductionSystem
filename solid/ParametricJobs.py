@@ -20,27 +20,28 @@ class SolidParametricJobs(ParametricJobs):
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
     saffron2_analysis_version = SmartColumn(TEXT, allowed=True)
+    analysis_macro = SmartColumn(TEXT, allowed=True)
     analysis_inputmacro = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
 
     def _setup_dirac_job(self, job, tmp_runscript):
         if self.solidsim_version is not None:
+            inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/SolidSim/%s/solid_g4_sim/input_macros/%s' %(self.solidsim_version, self.solidsim_macro)
+            if self.solidsim_inputmacro:
+                with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
+                    tempmacro.write(self.solidsim_inputmacro)
+                inputmacro = tempmacro.name
+
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
-                                       .render(macro=self.solidsim_macro,
+                                       .render(macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
                                                output_lfn=self.solidsim_output_lfn,
                                                seed=self.seed,
                                                nevents=self.solidsim_nevents)
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
-
-            inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/SolidSim/%s/solid_g4_sim/input_macros/%s' %(self.solidsim_version, self.solidsim_macro)
-            if self.solidsim_inputmacro:
-                with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
-                    tempmacro.write(self.solidsim_inputmacro)
-                inputmacro = tempmacro.name
 
             if self.solidsim_macro == "cosmicsSim.mac":
                 inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/atm-n-1000files/Gordon-Events-%d.txt' % i for i in range(1000)]
@@ -62,10 +63,17 @@ class SolidParametricJobs(ParametricJobs):
                 job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%s.%s' % (self.request_id, self.id))                
         else:
             day = self.day
+            inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/%s/saffron2/ops/%s' % (self.saffron2_analysis_version, self.analysis_macro)
+            if self.analysis_inputmacro:
+                with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
+                    tempmacro.write(self.analysis_inputmacro)
+                inputmacro = tempmacro.name
+
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
                                        .render(day=day.replace("-", "_"),
-                                               saffron2_version=self.saffron2_analysis_version)
+                                               saffron2_version=self.saffron2_analysis_version,
+                                               macro=os.path.basename(inputmacro))
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
 
@@ -97,12 +105,6 @@ class SolidParametricJobs(ParametricJobs):
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             self.num_jobs = len(inputdata_filenames)
-
-            inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.21/saffron2/ops/onlineMonitoringBR2.txt'
-            if self.analysis_inputmacro:
-                with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
-                    tempmacro.write(self.analysis_inputmacro)
-                inputmacro = tempmacro.name
 
             job.setName("SoLid_data_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')

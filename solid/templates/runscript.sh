@@ -68,7 +68,7 @@ runNUMBER=$(echo $file | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
 echo -e "runNumber="
 echo $runNUMBER
 
-/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
+/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
 
 dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/analysis/days/{{ day }}/${Version}/${Patch}/histos/S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
