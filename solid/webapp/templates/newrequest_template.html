@@ -83,13 +83,13 @@
 	<br>
 	<label id="solidsim_nevents_label" for="solidsim_nevents">NEvents:</label>
 	<div class="input-group">
-	  <input id="solidsim_nevents" name="num_jobs" placeholder="Number of events" class="form-control togglable" toggle="sim_toggle" type="text" required/>
+	  <input id="solidsim_nevents" name="solidsim_nevents" placeholder="Number of events" class="form-control togglable" toggle="sim_toggle" type="text" required/>
 	</div>
 
 	<br>
 	<label for="seed">Initial Seed:</label>
 	<div class="input-group">
-	  <input id="seed" name="seed" placeholder="Initial seed" class="form-control togglable" toggle="sim_toggle" type="text" required/>
+	  <input id="seed" name="seed" placeholder="Initial seed" class="form-control togglable" toggle="sim_toggle" type="text"/>
 	</div>
 
 	<br>
@@ -287,11 +287,11 @@ $(document).ready(function() {
 	var lfn_path = $("#solidsim_output_lfn").val();
 	if (solidsim_inputfiletype === "atm-n"){
 	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/NEUTRONS-newPhysList");
-	    $("#solidsim_nevents_label").text("N * 6 minutes:");
+	    $("#solidsim_nevents_label").text("N * 12 minutes:");
 	}
 	else if (solidsim_inputfiletype === "muons-reduced"){
 	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/MUONS-newPhysList");
-	    $("#solidsim_nevents_label").text("N * 12 minutes:");
+	    $("#solidsim_nevents_label").text("N * 6 minutes:");
 	}
 	else {
 	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics");
@@ -321,6 +321,47 @@ $(document).ready(function() {
                });
     });
 
+    function setup_simulation_job(form_data, data){
+	var solidsim_macro = $("#solidsim_macro option:selected").text();
+	if (solidsim_macro !== "cosmicsSim.mac"){
+	    if(!form_data['seed']){
+		form_data['seed'] = Math.floor(Math.random() * 1000000);
+	    }
+	    form_data["num_jobs"] = 1;
+	    data["request"]["parametricjobs"].push(form_data);
+	}
+	else{
+	    var nevents = parseInt(form_data['solidsim_nevents']);
+	    form_data['num_jobs'] = 1000;
+	    form_data['solidsim_nevents'] = 50000;
+	    for (var i=0; i<nevents; i++){
+		form_data['jobnumber_start'] = i * 1000;
+		form_data['seed'] = Math.floor(Math.random() * 1000000);
+		data["request"]["parametricjobs"].push(form_data);
+	    }
+	}
+
+	upload_data(data);
+//	return data;
+    }
+
+    function setup_analysis_job(form_data, data){
+	var days = form_data["days"].split(" - ");
+	var from_date = new Date(days[0]);
+	var to_date = new Date(days[1]);
+	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
+	for (var i=0; i<(ndays+1); i++){
+	    var d = new Date(from_date.valueOf());
+	    d.setDate(from_date.getDate() + i);
+	    console.debug(form_data['analysis_inputmacro'])
+	    data["request"]["parametricjobs"].push({"num_jobs": 1, // Temporary as num_jobs determined at submission time.
+						    "analysis_inputmacro": form_data.analysis_inputmacro || '',
+						    "day": d.toISOString().split("T")[0]});
+	}
+	upload_data(data);
+//	return data;
+    }
+
     $("form").submit(function(event){
 	event.preventDefault();  // prevent default submission as doesn't create json content.
 	var form_data = new Object();
@@ -328,62 +369,51 @@ $(document).ready(function() {
 	    form_data[mapping.name] = mapping.value;
 	});
 
-
-        // Check for the various File API support.
-        if (window.File && window.FileReader && window.FileList && window.Blob) {
-            var f = $("#analysis_inputmacro").prop("files")[0];
-            if (f){
-               var r = new FileReader();
-               r.onload = function(e) {
-                  form_data["analysis_inputmacro"] = e.target.result;
-		   console.warn(form_data["analysis_inputmacro"]);
-               }
-               r.readAsText(f);
-            }
-            else{
-               bootstrap_alert("warning", "ERROR:", "Couldn't find file.");
-            }
-
-            var g = $("#solidsim_inputmacro").prop("files")[0];
-            if (g){
-               var r = new FileReader();
-               r.onload = function(e) {
-                  form_data["solidsim_inputmacro"] = e.target.result;
-               }
-               r.readAsText(g);
-            }
-            else{
-               bootstrap_alert("warning", "ERROR:", "Couldn't find file.");
-            }
-
-        } else {
-          bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
-        }
-
         
 	var data = {"request":{"description": "new request", "parametricjobs": []}};
 
 	if ($("#reduction_toggle").prop("checked")){
-	    var days = form_data["days"].split(" - ");
-	    var from_date = new Date(days[0]);
-	    var to_date = new Date(days[1]);
-	    var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
-	    for (var i=0; i<(ndays+1); i++){
-		var d = new Date(from_date.valueOf());
-		d.setDate(from_date.getDate() + i);
-		console.debug(form_data['analysis_inputmacro'])
-		data["request"]["parametricjobs"].push({"num_jobs": 1, // Temporary as num_jobs determined at submission time.
-							"analysis_inputmacro": form_data.analysis_inputmacro || '',
-							"day": d.toISOString().split("T")[0]});
-	    }
-	    
+            var g = $("#analysis_inputmacro").prop("files")[0];
+            if (g){
+		// Check for the various File API support.
+		if (window.File && window.FileReader && window.FileList && window.Blob){
+		    var r = new FileReader();
+		    r.onload = function(e) {
+			form_data["analysis_inputmacro"] = e.target.result;
+			setup_analysis_job(form_data, data);
+		    }
+		    r.readAsText(g);
+		}
+		else {
+		    bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+		    return;
+		}
+            }
+            else{
+		setup_analysis_job(form_data, data);
+            } 
 	}
+
 	else if($("#sim_toggle").prop("checked")){
-	    var solidsim_macro = $("#solidsim_macro option:selected").text();
-	    if (solidsim_macro !== "cosmicsSim.mac"){
-		form_data["num_jobs"] = 1;
-		data["request"]["parametricjobs"].push(form_data);
-	    }
+            var g = $("#solidsim_inputmacro").prop("files")[0];
+            if (g){
+		// Check for the various File API support.
+		if (window.File && window.FileReader && window.FileList && window.Blob){
+		    var r = new FileReader();
+		    r.onload = function(e) {
+			form_data["solidsim_inputmacro"] = e.target.result;
+			setup_simulation_job(form_data, data);
+		    }
+		    r.readAsText(g);
+		}
+		else {
+		    bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+		    return;
+		}
+            }
+            else{
+		setup_simulation_job(form_data, data);
+            }   
 	}
 
 /*	var run = 3;
@@ -404,6 +434,9 @@ $(document).ready(function() {
 			                 "analysis_inputfile": form_data["analysis_inputfile"]})
 	}
 */
+    });
+
+    function upload_data(data){
 	parent.$.fancybox.close();
 	$.ajax({url: "/api/requests",
 		type: "POST",
@@ -420,7 +453,8 @@ $(document).ready(function() {
 		}
 	       });
 
-    });
+
+    }
 
 });
 {% endblock %}

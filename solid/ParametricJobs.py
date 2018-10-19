@@ -30,7 +30,8 @@ class SolidParametricJobs(ParametricJobs):
                                        .render(macro=self.solidsim_macro,
                                                version=self.solidsim_version,
                                                output_lfn=self.solidsim_output_lfn,
-                                               seed=self.seed)
+                                               seed=self.seed,
+                                               nevents=self.solidsim_nevents)
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
 
