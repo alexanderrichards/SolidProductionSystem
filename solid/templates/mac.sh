@@ -70,8 +70,8 @@ echo -e "\n"
 ls -l
 echo -e "\n"
 
-output_dir = $(basename "{{ ouput_lfn }}")
-output_filename = $(basename "{{ ouput_lfn }}" .root)${jobnumber}.root
+output_dir= $(basename "{{ ouput_lfn }}")
+output_filename= $(basename "{{ ouput_lfn }}" .root)${jobnumber}.root
 
 /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/solid-build/SolidSim /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/${Macro} -o ${output_filename} ${inputfile} -n {{ nevents }} -s ${randomseed} &> log.txt
 #-c /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/phase1.config
