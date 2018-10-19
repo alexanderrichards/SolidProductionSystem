@@ -19,12 +19,13 @@ class SolidParametricJobs(ParametricJobs):
     saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
+    saffron2_analysis_version = SmartColumn(TEXT, allowed=True)
     analysis_inputmacro = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
 
     def _setup_dirac_job(self, job, tmp_runscript):
-        if solidsim_version is not None:
+        if self.solidsim_version is not None:
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
                                        .render(macro=self.solidsim_macro,
@@ -63,7 +64,8 @@ class SolidParametricJobs(ParametricJobs):
             day = self.day
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
-                                       .render(day=day.replace("-", "_"))
+                                       .render(day=day.replace("-", "_"),
+                                               saffron2_version=self.saffron2_analysis_version)
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
 

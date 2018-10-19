@@ -2,7 +2,7 @@
 
 jobnumber=$1
 inputfile=$2
-Version=v1.21
+Version={{ saffron2_version }}
 Patch=patch4
 echo -e "arguments="
 echo $jobnumber

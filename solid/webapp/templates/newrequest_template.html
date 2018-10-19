@@ -144,6 +144,13 @@
 	</div>
 
 	<br>
+	<label for="saffron2_analysis_version">Select Saffron2 Analysis Version:</label>
+	<div class="input-group">
+	  <select id="saffron2_analysis_version" name="saffron2_analysis_version" class="form-control togglable" toggle="reduction_toggle" title="Saffron2 Analysis Version" required disabled>
+	  </select>
+	</div>
+
+	<br>
 	<label for="daterangepicker">Date:</label>	
 	<div class="input-group">
 	  <div class="input-group-addon">
@@ -256,6 +263,7 @@ $(document).ready(function() {
 		console.log("Successfully got saffron2 versions.");
 		$.each(result, function(index, value){
 		    $("#saffron2_ro_version").append(`<option>${value}</option>`)
+		    $("#saffron2_analysis_version").append(`<option>${value}</option>`)
 		});
 //                $("#saffron2_ro_version").html(result);
 //                $("#saffron2_ro_version").selectpicker("refresh");
