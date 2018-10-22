@@ -302,6 +302,11 @@ $(document).ready(function() {
 	$("#solidsim_macro").prop("disabled", true);
     });
 
+    $("#analysis_inputmacro").change(function(){
+	$("#analysis_macro").prop("required", false);
+	$("#analysis_macro").prop("disabled", true);
+    });
+
     $("#solidsim_macro").change(function(){
 	var solidsim_macro = $("#solidsim_macro option:selected").text();
 	if (solidsim_macro === "cosmicsSim.mac"){
@@ -385,13 +390,15 @@ $(document).ready(function() {
 	var from_date = new Date(days[0]);
 	var to_date = new Date(days[1]);
 	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
+	form_data["num_jobs"] = 1;  // Temporary as num_jobs determined at submission time.
+	delete form_data["days"];
+	//form_data["analysis_inputmacro"] = form_data.analysis_inputmacro || '';
 	for (var i=0; i<(ndays+1); i++){
 	    var d = new Date(from_date.valueOf());
 	    d.setDate(from_date.getDate() + i);
-	    console.debug(form_data['analysis_inputmacro'])
-	    data["request"]["parametricjobs"].push({"num_jobs": 1, // Temporary as num_jobs determined at submission time.
-						    "analysis_inputmacro": form_data.analysis_inputmacro || '',
-						    "day": d.toISOString().split("T")[0]});
+	    //console.debug(form_data['analysis_inputmacro'])
+	    form_data["day"] = d.toISOString().split("T")[0];
+	    data["request"]["parametricjobs"].push(form_data);
 	}
 	upload_data(data);
 //	return data;
