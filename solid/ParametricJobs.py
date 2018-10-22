@@ -23,6 +23,7 @@ class SolidParametricJobs(ParametricJobs):
     saffron2_analysis_version = SmartColumn(TEXT, allowed=True)
     analysis_macro = SmartColumn(TEXT, allowed=True)
     analysis_inputmacro = SmartColumn(TEXT, allowed=True)
+    analysis_output_lfndir = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
 
@@ -63,7 +64,6 @@ class SolidParametricJobs(ParametricJobs):
                 job.setInputSandbox([tmp_runscript.name, inputmacro])
                 job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%s.%s' % (self.request_id, self.id))                
         else:
-            day = self.day
             inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/%s/saffron2/ops/%s' % (self.saffron2_analysis_version, self.analysis_macro)
             if self.analysis_inputmacro:
                 with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
@@ -72,9 +72,10 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
-                                       .render(day=day.replace("-", "_"),
+                                       .render(day=self.day.replace("-", "_"),
                                                saffron2_version=self.saffron2_analysis_version,
-                                               macro=os.path.basename(inputmacro))
+                                               macro=os.path.basename(inputmacro),
+                                               analysis_output_lfndir=self.analysis_output_lfndir.format(day=self.day.replace("-", "_")))
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
 

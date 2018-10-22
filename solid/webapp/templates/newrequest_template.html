@@ -172,6 +172,12 @@
 	  <input type="file" class="form-control togglable" toggle="reduction_toggle" name="analysis_inputmacro" id="analysis_inputmacro" disabled>
 	</div>
 
+	<br>
+	<label for="analysis_output_lfndir">Analysis Output LFN directory:</label>
+	<div class="input-group">
+	  <input id="analysis_output_lfndir" name="analysis_output_lfndir" toggle="reduction_toggle" type="text" class="form-control togglable" placeholder="Analysis output LFN" aria-describedby="basic-addon1" value="/solidexperiment.org/Data/phase1_BR2/analysis/days" required disabled/>
+	</div>
+
       </div>
     </div>
 
@@ -290,6 +296,8 @@ $(document).ready(function() {
 		success: function(result) {
 		    console.log("Successfully got saffron2 versions.");
 		    $("#analysis_macro").empty();
+		    //var init_day = $("#daterangepicker").val().split(" - ")[0].replace(/-/g,'_');
+		    $("#analysis_output_lfndir").val(`/solidexperiment.org/Data/phase1_BR2/analysis/days/{day}/${saffron2_version}/<PATCH>`);
 		    $.each(result, function(index, value){
 			$("#analysis_macro").append(`<option>${value}</option>`);
 		    });
@@ -297,6 +305,12 @@ $(document).ready(function() {
 	       });
     });
 
+/*    $("#daterangepicker").change(function(){
+	var saffron2_version = $("#saffron2_analysis_version option:selected").text();
+	//var init_day = $("#daterangepicker").val().split(" - ")[0].replace(/-/g,'_');
+	$("#analysis_output_lfndir").val(`/solidexperiment.org/Data/phase1_BR2/analysis/days/{day}/${saffron2_version}/<PATCH>`);
+    });
+*/
     $("#solidsim_inputmacro").change(function(){
 	$("#solidsim_macro").prop("required", false);
 	$("#solidsim_macro").prop("disabled", true);
