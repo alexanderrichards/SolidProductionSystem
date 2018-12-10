@@ -78,10 +78,10 @@ class SolidParametricJobs(ParametricJobs):
 
             if self.ro_baselinetype == "April-2018":
                 ro_baseline_lfn='LFN:/solidexperiment.org/Data/phase1_BR2/april2018-baselines.root'
-                self.runNumber=100001
+                self.runNumber=1030000
             else:
                 ro_baseline_lfn='LFN:/solidexperiment.org/Data/phase1_BR2/december2017-baselines.root'
-                self.runNumber=101001
+                self.runNumber=1010000
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
