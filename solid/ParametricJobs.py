@@ -23,7 +23,7 @@ class SolidParametricJobs(ParametricJobs):
     ro_baselinetype = SmartColumn(TEXT, allowed=True)
     ro_input_lfndir = SmartColumn(TEXT, allowed=True)
     ro_output_lfndir = SmartColumn(TEXT, allowed=True)
-    saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
+#    saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
     saffron2_analysis_version = SmartColumn(TEXT, allowed=True)
