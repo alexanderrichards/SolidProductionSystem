@@ -17,7 +17,13 @@ class SolidParametricJobs(ParametricJobs):
     solidsim_inputfiletype = SmartColumn(TEXT, allowed=True)
     solidsim_output_lfn = SmartColumn(TEXT, allowed=True)
     saffron2_ro_version = SmartColumn(TEXT, allowed=True)
-    saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
+    ro_macro = SmartColumn(TEXT, allowed=True)
+    ro_inputmacro = SmartColumn(TEXT, allowed=True)
+    ro_runNumber = SmartColumn(TEXT, allowed=True)   
+    ro_baselinetype = SmartColumn(TEXT, allowed=True)
+    ro_input_lfndir = SmartColumn(TEXT, allowed=True)
+    ro_output_lfndir = SmartColumn(TEXT, allowed=True)
+#    saffron2_output_lfn = SmartColumn(TEXT, allowed=True)
     seed = SmartColumn(Integer, allowed=True)
     jobnumber_start = SmartColumn(Integer, allowed=True)
     saffron2_analysis_version = SmartColumn(TEXT, allowed=True)
@@ -49,8 +55,8 @@ class SolidParametricJobs(ParametricJobs):
                 inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/atm-n-1000files/Gordon-Events-%d.txt' % i for i in range(1000)]
                 inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
                 job.setName("SoLid_{name}%(argjn)s".format(name={'atm-n': 'N_',
-                                                                 'muons-reduced': 'mu_'}.get(self.solidsim_inputfiletype, '')))
-                job.setPlatform('ANY')
+                                                                 'muons': 'mu_'}.get(self.solidsim_inputfiletype, '')))
+                job.setPlatform('EL7')
                 job.setDestination('ANY')
                 job.setInputSandbox([tmp_runscript.name, inputmacro])
                 job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
@@ -59,10 +65,67 @@ class SolidParametricJobs(ParametricJobs):
                 job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(argjn)s %(input_filenames)s')
             else:
                 job.setName("SoLid_Simulation_%s.%s" % (self.request_id, self.id))
-                job.setPlatform('ANY')
+                job.setPlatform('EL7')
                 job.setDestination('ANY')
                 job.setInputSandbox([tmp_runscript.name, inputmacro])
-                job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%s.%s' % (self.request_id, self.id))                
+                job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%s.%s' % (self.request_id, self.id))
+        elif self.saffron2_ro_version is not None:
+            inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/%s/saffron2/ops/%s' % (self.saffron2_ro_version, self.ro_macro)
+            if self.ro_inputmacro:
+                with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
+                    tempmacro.write(self.ro_inputmacro)
+                inputmacro = tempmacro.name
+
+            if self.ro_baselinetype == "April-2018":
+                ro_baseline_lfn='LFN:/solidexperiment.org/Data/phase1_BR2/april2018-baselines.root'
+                self.runNumber=100001
+            else:
+                ro_baseline_lfn='LFN:/solidexperiment.org/Data/phase1_BR2/december2017-baselines.root'
+                self.runNumber=101001
+
+            runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
+                                       .get_template("rosim.sh")\
+                                       .render(saffron2_version=self.saffron2_ro_version,
+                                               macro=os.path.basename(inputmacro),
+                                               ro_output_lfndir=self.ro_output_lfndir.format,
+                                               ro_runNumber=self.runNumber)            
+            tmp_runscript.write(runscript_template)
+            tmp_runscript.flush()
+                
+            input_directory_path=ro_input_lfndir
+            with dirac_rpc_client("DataManagement/FileCatalog") as rpcclient:
+                dir_content = deepcopy(rpcclient.listDirectory(directory_path, False))
+            if not dir_content["OK"]:
+                self.logger.error("Failed to contact DIRAC server for %s", directory_path)
+                self.logger.error(dir_content['Message'])
+                raise RuntimeError("Failed to contact DIRAC server for %s", directory_path)
+
+            if input_directory_path in dir_content['Value']['Failed']:
+                self.logger.error("Could not access %s, maybe it doesn't exist?", input_directory_path)
+                raise RuntimeError("Could not access %s, maybe it doesn't exist?", input_directory_path)
+            files = dir_content['Value']['Successful'][input_directory_path]['Files']
+                
+            inputdata_lfns = []
+            for filename in files.keys():
+                if not filename.endswith('.root'):
+                    continue
+    #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
+                inputdata_lfns.append(os.path.join(input_directory_path, filename))
+ 
+            job_numbers = range(len(inputdata_lfns))
+            inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
+            self.num_jobs = len(inputdata_filenames)
+
+            job.setName("SoLid_ro_%(jobno)s")
+            job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
+            job.setPlatform('EL7')
+    #        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
+            job.setDestination('ANY')
+            job.setInputSandbox([tmp_runscript.name, inputmacro, ro_baseline_lfn])
+    #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
+            job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
+            job.setParameterSequence('jobno', job_numbers, addToWorkflow=False)
+            job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)               
         else:
             inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/%s/saffron2/ops/%s' % (self.saffron2_analysis_version, self.analysis_macro)
             if self.analysis_inputmacro:
@@ -110,7 +173,7 @@ class SolidParametricJobs(ParametricJobs):
 
             job.setName("SoLid_data_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
-            job.setPlatform('ANY')
+            job.setPlatform('EL7')
     #        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
             job.setDestination('ANY')
             job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])

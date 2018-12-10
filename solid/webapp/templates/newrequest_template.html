@@ -52,14 +52,14 @@
 	<br>
         <label for="solidsim_version">Select SolidSim Version:</label>
         <div class="input-group">
-	  <select id="solidsim_version" name="solidsim_version" class="selectpicker form-control togglable" toggle="sim_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="180px" data-dropup-auto="false" data-live-search-placeholder="Search..." title="SolidSim Version" required>
+	  <select id="solidsim_version" name="solidsim_version" class="form-control togglable" toggle="sim_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="180px" data-dropup-auto="false" data-live-search-placeholder="Search..." title="SolidSim Version" required>
 	  </select>
         </div>
 
 	<br>
 	<label for="solidsim_macro">SolidSim Macro:</label>
 	<div class="input-group macro-selection">
-	  <select id="solidsim_macro"  name="solidsim_macro", class="selectpicker form-control togglable" toggle="sim_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required>
+	  <select id="solidsim_macro"  name="solidsim_macro", class="form-control togglable" toggle="sim_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required>
 	  </select>
 	</div>
 
@@ -74,7 +74,7 @@
 	<div class="input-group">
 	  <select id="solidsim_inputfiletype" name="solidsim_inputfiletype" class="form-control togglable" toggleoff="sim_toggle" title="SolidSim input file type" required disabled>
 	    <option>atm-n</option>
-	    <option>muons-reduced</option>
+	    <option>muons</option>
 	    <option>BiPo</option>
 	  </select>
 	  <!--<input id="solidsim_inputfile_lfn" name="solidsim_inputfile_lfn" toggleoff="sim_toggle" toggle="solidsim_inputfile_lfn_toggle" type="text" class="form-control togglable" placeholder="SolidSim input file LFN" aria-describedby="basic-addon1" required disabled>-->
@@ -115,18 +115,47 @@
 	</div>
 
 	<br>
-	<label for="saffron2_ro_version">Select Saffron2 RO Version:</label>
+	<label for="saffron2_ro_version">Select Saffron2 ROsim Version:</label>
 	<div class="input-group">
-	  <select id="saffron2_ro_version" name="saffron2_ro_version" class="selectpicker form-control togglable" toggle="ro_toggle" data-live-search="true" data-live-search-style="startsWith" data-size="10" data-width="180px" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Saffron2 RO Version" required disabled>
+	  <select id="saffron2_ro_version" name="saffron2_ro_version" class="form-control togglable" toggle="ro_toggle" title="Saffron2 ROsim Version" required disabled>
+	  </select>
+	</div>
+	
+	<br>
+	<label for="ro_macro">ROsim Macro:</label>
+	<div class="input-group macro-selection">
+	  <select id="ro_macro"  name="ro_macro", class="form-control togglable" toggle="ro_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required disabled>
 	  </select>
 	</div>
 
 	<br>
-	<label for="saffron2_output_lfn">Saffron2 RO Output LFN:</label>
+	<label for="ro_inputmacro">Input Macro:</label>
 	<div class="input-group">
-	  <input id="saffron2_output_lfn" name="saffron2_output_lfn" toggle="ro_toggle" type="text" class="form-ontrol togglable" placeholder="Saffron2 RO output LFN" aria-describedby="basic-addon1" required disabled/>
+	  <input type="file" class="form-control togglable" toggle="ro_toggle" name="ro_inputmacro" id="ro_inputmacro" disabled>
 	</div>
 
+	<br>
+	<label for="ro_input_lfndir"> LFN directory to be run by ROsim:</label>
+	<div class="input-group">
+	  <input id="ro_input_lfndir" name="ro_input_lfndir" toggle="ro_toggle" type="text" class="form-control togglable" placeholder="RO input LFN" aria-describedby="basic-addon1" value="/solidexperiment.org/MC/Phase1-validation/<Patch>" required disabled/>
+	</div>
+	
+	<br>
+	<label for="ro_baselinetype">ROsim Baseline Type:</label>
+	<div class="input-group">
+	  <select id="ro_baselinetype" name="ro_baselinetype" class="form-control togglable" toggle="ro_toggle" title="ROsim baseline type" required disabled>
+	    <option>April-2018</option>
+	    <option>December-2017</option>
+	  </select>
+	  <!--<input id="solidsim_inputfile_lfn" name="solidsim_inputfile_lfn" toggleoff="sim_toggle" toggle="solidsim_inputfile_lfn_toggle" type="text" class="form-control togglable" placeholder="SolidSim input file LFN" aria-describedby="basic-addon1" required disabled>-->
+	</div>
+	
+	<br>
+	<label for="ro_output_lfndir">ROsim Output LFN directory:</label>
+	<div class="input-group">
+	  <input id="ro_output_lfndir" name="ro_output_lfndir" toggle="ro_toggle" type="text" class="form-control togglable" placeholder="RO output LFN" aria-describedby="basic-addon1" value="/solidexperiment.org/MC/Phase1-validation" required disabled/>
+	</div>
+	
       </div>
 
       <!-- Analysis -->
@@ -162,7 +191,7 @@
 	<br>
 	<label for="analysis_macro">Analysis Macro:</label>
 	<div class="input-group macro-selection">
-	  <select id="analysis_macro"  name="analysis_macro", class="selectpicker form-control togglable" toggle="reduction_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required disabled>
+	  <select id="analysis_macro"  name="analysis_macro", class="form-control togglable" toggle="reduction_toggle" data-size="6" width="100%" data-selected-text-format="count > 1" data-live-search="true" data-dropup-auto="false" data-live-search-placeholder="Search..." title="Macros" multiple required disabled>
 	  </select>
 	</div>
 
@@ -238,7 +267,7 @@ $(document).ready(function() {
 
     $(".toggle").change(function(){
 	$(".togglable[toggle~='" + this.id + "']").prop("disabled", !this.checked);
-	$("select[toggle='" + this.id + "']").selectpicker("refresh");
+//	$("select[toggle='" + this.id + "']").selectpicker("refresh");
 	if (!this.checked){
 	    $(".togglable[toggleoff~='" + this.id + "']").prop("disabled", true);    
 	}
@@ -279,10 +308,30 @@ $(document).ready(function() {
 		    $("#saffron2_analysis_version").append(`<option>${value}</option>`);
 		});
 		$("#saffron2_analysis_version").trigger("change");
-//                $("#saffron2_ro_version").html(result);
-//                $("#saffron2_ro_version").selectpicker("refresh");
+		$("#saffron2_ro_version").trigger("change");
             }
 	   });
+    $("#saffron2_ro_version").change(function() {	
+	var saffron2_version = $("#saffron2_ro_version option:selected").text();
+	$.ajax({url: `/cvmfs/solidexperiment.egi.eu/el6/saffron2/${saffron2_version}/saffron2/ops`,
+		type: "POST",
+		data: JSON.stringify({"regex": ".*\.txt", "type": "files"}),
+		contentType: "application/json; charset=utf-8",
+		error: function(request, status, error){
+		    console.warn(`Error getting saffron2 version!\nstatus: ${status}\nerror: ${error}\nrequest: ` + JSON.stringify(request))
+		    parent.bootstrap_alert("Attention!", `Error getting saffron2 version! status: ${status} error: ${error}`, "alert-danger");
+		},
+		success: function(result) {
+		    console.log("Successfully got saffron2 versions.");
+		    $("#ro_macro").empty();
+		    //var init_day = $("#daterangepicker").val().split(" - ")[0].replace(/-/g,'_');
+		    $("#ro_output_lfndir").val(`/solidexperiment.org/MC/Phase1-validation/<PATCH>/RO/${saffron2_version}/`);
+		    $.each(result, function(index, value){
+		        $("#ro_macro").append(`<option>${value}</option>`);
+		    });
+		}
+	       });
+    });
     $("#saffron2_analysis_version").change(function() {	
 	var saffron2_version = $("#saffron2_analysis_version option:selected").text();
 	$.ajax({url: `/cvmfs/solidexperiment.egi.eu/el6/saffron2/${saffron2_version}/saffron2/ops`,
@@ -304,7 +353,7 @@ $(document).ready(function() {
 		}
 	       });
     });
-
+	
 /*    $("#daterangepicker").change(function(){
 	var saffron2_version = $("#saffron2_analysis_version option:selected").text();
 	//var init_day = $("#daterangepicker").val().split(" - ")[0].replace(/-/g,'_');
@@ -314,6 +363,11 @@ $(document).ready(function() {
     $("#solidsim_inputmacro").change(function(){
 	$("#solidsim_macro").prop("required", false);
 	$("#solidsim_macro").prop("disabled", true);
+    });
+
+    $("#ro_inputmacro").change(function(){
+	$("#ro_macro").prop("required", false);
+	$("#ro_macro").prop("disabled", true);
     });
 
     $("#analysis_inputmacro").change(function(){
@@ -330,21 +384,21 @@ $(document).ready(function() {
 	    $("#solidsim_inputfiletype").trigger("change");
 	}
 	else{
-	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation");
+	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/<PATCH>/g4/");
 	    $("#solidsim_inputfiletype").prop("disabled", true);
 	    $("#solidsim_nevents_label").text("NEvents:")
 	}
     });
-    
+
     $("#solidsim_inputfiletype").change(function(){
 	var solidsim_inputfiletype = $("#solidsim_inputfiletype option:selected").text();
 	var lfn_path = $("#solidsim_output_lfn").val();
 	if (solidsim_inputfiletype === "atm-n"){
-	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/NEUTRONS-newPhysList");
+	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/NEUTRONS-newPhysList/<PATCH>/g4/");
 	    $("#solidsim_nevents_label").text("N * 12 minutes:");
 	}
-	else if (solidsim_inputfiletype === "muons-reduced"){
-	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/MUONS-newPhysList");
+	else if (solidsim_inputfiletype === "muons"){
+	    $("#solidsim_output_lfn").val("/solidexperiment.org/MC/Phase1-validation/cosmics/MUONS-newPhysList/<PATCH>/g4/");
 	    $("#solidsim_nevents_label").text("N * 6 minutes:");
 	}
 	else {
@@ -379,7 +433,7 @@ $(document).ready(function() {
 	var solidsim_macro = $("#solidsim_macro option:selected").text();
 	if (solidsim_macro !== "cosmicsSim.mac"){
 	    if(!form_data['seed']){
-		form_data['seed'] = Math.floor(Math.random() * 1000000);
+		form_data['seed'] = Math.floor(200000 + (Math.random() * 1800000));
 	    }
 	    form_data["num_jobs"] = 1;
 	    data["request"]["parametricjobs"].push(form_data);
@@ -390,7 +444,7 @@ $(document).ready(function() {
 	    form_data['solidsim_nevents'] = 50000;
 	    for (var i=0; i<nevents; i++){
 		form_data['jobnumber_start'] = i * 1000;
-		form_data['seed'] = Math.floor(Math.random() * 1000000);
+		form_data['seed'] = Math.floor(200000 + (Math.random() * 1800000));
 		data["request"]["parametricjobs"].push(form_data);
 	    }
 	}
@@ -449,7 +503,11 @@ $(document).ready(function() {
 		setup_analysis_job(form_data, data);
             } 
 	}
-
+	else if($("#ro_toggle").prop("checked")){
+	    form_data["num_jobs"] = 1;  // Temporary as num_jobs determined at submission time.
+	    data["request"]["parametricjobs"].push(form_data);
+	    upload_data(data);
+	}
 	else if($("#sim_toggle").prop("checked")){
             var g = $("#solidsim_inputmacro").prop("files")[0];
             if (g){
@@ -474,7 +532,7 @@ $(document).ready(function() {
 
 /*	var run = 3;
 	var num_jobs = 180;
-	if (form_data["solidsim_inputfiletype"] == "muons-reduced"){
+	if (form_data["solidsim_inputfiletype"] == "muons"){
 	    num_jobs = 100;
 	}
 //	for (var i=0; i<5; i++){
