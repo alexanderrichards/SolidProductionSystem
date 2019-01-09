@@ -16,6 +16,7 @@ echo -e "randomseed"
 echo $jobnumber
 echo $inputfile
 echo $randomseed
+echo {{ id }}
 date
 pwd
 sleep 2
@@ -71,13 +72,13 @@ ls -l
 echo -e "\n"
 
 output_dir=$(dirname "{{ output_lfn }}")
-output_filename=$(basename "{{ output_lfn }}" .root)${jobnumber}.root
+output_filename=$(basename "{{ output_lfn }}" .root)${jobnumber}_{{ id }}.root
 
 /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/solid-build/SolidSim /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/${Macro} -o ${output_filename} ${inputfile} -n {{ nevents }} -s ${randomseed} &> log.txt
 #-c /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/phase1.config
 
 dirac-dms-add-file ${output_dir}/${output_filename} ${output_filename} BEgrid-ULB-VUB-disk  #BEgrid-ULB-VUB-disk #UKI-LT2-IC-HEP-disk
-dirac-dms-add-file ${output_dir}/log_${jobnumber}.txt log.txt BEgrid-ULB-VUB-disk  #BEgrid-ULB-VUB-disk #UKI-LT2-IC-HEP-disk
+dirac-dms-add-file ${output_dir}/log_${jobnumber}_{{ id }}.txt log.txt BEgrid-ULB-VUB-disk  #BEgrid-ULB-VUB-disk #UKI-LT2-IC-HEP-disk
 #dirac-dms-add-file /solidexperiment.org/MC/Phase1-validation/cosmics/Neutron-reduced/NEUTRONS-T9cut1/g4/1h1/logs/Script_${jobnumber}.log Script1_macN.sh.log UKI-LT2-IC-HEP-disk #BEgrid-ULB-VUB-disk 
 
 rm ${inputfile} ${output_filename} log.txt
