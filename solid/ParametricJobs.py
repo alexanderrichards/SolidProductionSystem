@@ -43,7 +43,8 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
-                                       .render(macro=os.path.basename(inputmacro),
+                                       .render(id='.'.join(self.request_id, self.id),
+                                               macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
                                                output_lfn=self.solidsim_output_lfn,
                                                seed=self.seed,
@@ -52,6 +53,7 @@ class SolidParametricJobs(ParametricJobs):
             tmp_runscript.flush()
 
             if self.solidsim_macro == "cosmicsSim.mac":
+                
                 inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/atm-n-1000files/Gordon-Events-%d.txt' % i for i in range(1000)]
                 inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
                 job.setName("SoLid_{name}%(argjn)s".format(name={'atm-n': 'N_',
@@ -85,7 +87,8 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
-                                       .render(saffron2_version=self.saffron2_ro_version,
+                                       .render(id='.'.join(self.request_id, self.id),
+                                               saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
                                                ro_output_lfndir=self.ro_output_lfndir.format,
                                                ro_runNumber=self.runNumber)            
@@ -162,7 +165,7 @@ class SolidParametricJobs(ParametricJobs):
 
             inputdata_lfns = []
             for filename in files.keys():
-                if not filename.endswith('.sbf'):
+                if not filename.endswith('.sbf.bz2'):
                     continue
     #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
                 inputdata_lfns.append(os.path.join(directory_path, filename))
@@ -173,7 +176,7 @@ class SolidParametricJobs(ParametricJobs):
 
             job.setName("SoLid_data_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
-            job.setPlatform('EL7')
+            job.setPlatform('ANY')
     #        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
             job.setDestination('ANY')
             job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])

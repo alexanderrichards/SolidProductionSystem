@@ -68,6 +68,9 @@ runNUMBER=$(echo $file | grep -o -E '[0-9]+' | head -1 | sed -e 's/^0\+//')
 echo -e "runNumber="
 echo $runNUMBER
 
+bzip2 -d ${inputfile}
+inputfile=${inputfile%.bz2}
+
 /cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
 

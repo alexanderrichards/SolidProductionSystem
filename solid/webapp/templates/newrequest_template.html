@@ -1,3 +1,4 @@
+
 {% extends "productionsystem/newrequest_template.html"%}
 
 {% block css_links %}
@@ -75,7 +76,7 @@
 	  <select id="solidsim_inputfiletype" name="solidsim_inputfiletype" class="form-control togglable" toggleoff="sim_toggle" title="SolidSim input file type" required disabled>
 	    <option>atm-n</option>
 	    <option>muons</option>
-	    <option>BiPo</option>
+	    <option>IBDsolo</option>
 	  </select>
 	  <!--<input id="solidsim_inputfile_lfn" name="solidsim_inputfile_lfn" toggleoff="sim_toggle" toggle="solidsim_inputfile_lfn_toggle" type="text" class="form-control togglable" placeholder="SolidSim input file LFN" aria-describedby="basic-addon1" required disabled>-->
 	</div>
@@ -443,16 +444,18 @@ $(document).ready(function() {
 	    form_data['num_jobs'] = 1000;
 	    form_data['solidsim_nevents'] = 50000;
 	    for (var i=0; i<nevents; i++){
-		form_data['jobnumber_start'] = i * 1000;
-		form_data['seed'] = Math.floor(200000 + (Math.random() * 1800000));
-		data["request"]["parametricjobs"].push(form_data);
+		parametricjob = $.extend(true, {}, form_data);
+		parametricjob['jobnumber_start'] = i * 1000;
+		//console.log(parametricjob['jobnumber_start'])
+		parametricjob['seed'] = Math.floor(200000 + (Math.random() * 1800000));
+		//console.log(parametricjob['seed'])		     
+		data["request"]["parametricjobs"].push(parametricjob);
 	    }
 	}
-
 	upload_data(data);
 //	return data;
     }
-
+				     
     function setup_analysis_job(form_data, data){
 	var days = form_data["days"].split(" - ");
 	var from_date = new Date(days[0]);
@@ -465,20 +468,20 @@ $(document).ready(function() {
 	    var d = new Date(from_date.valueOf());
 	    d.setDate(from_date.getDate() + i);
 	    //console.debug(form_data['analysis_inputmacro'])
-	    form_data["day"] = d.toISOString().split("T")[0];
-	    data["request"]["parametricjobs"].push(form_data);
+	    parametricjob = $.extend(true, {}, form_data);
+	    parametricjob["day"] = d.toISOString().split("T")[0];
+	    data["request"]["parametricjobs"].push(parametricjob);
 	}
 	upload_data(data);
 //	return data;
     }
 
-    $("form").submit(function(event){
+	$("form").submit(function(event){
 	event.preventDefault();  // prevent default submission as doesn't create json content.
 	var form_data = new Object();
 	$.each($(this).serializeArray(), function(index, mapping){
 	    form_data[mapping.name] = mapping.value;
 	});
-
         
 	var data = {"request":{"description": "new request", "parametricjobs": []}};
 
@@ -529,28 +532,10 @@ $(document).ready(function() {
 		setup_simulation_job(form_data, data);
             }   
 	}
-
-/*	var run = 3;
-	var num_jobs = 180;
-	if (form_data["solidsim_inputfiletype"] == "muons"){
-	    num_jobs = 100;
-	}
-//	for (var i=0; i<5; i++){
-	for (var i=0; i<2; i++){
-	    data["parametricjobs"].push({"num_jobs": 2,//num_jobs,
-                        		 "solidsim_version": form_data["solidsim_version"],
-					 "solidsim_macro": form_data["solidsim_macro"],
-					 "solidsim_inputfiletype": form_data["solidsim_inputfiletype"],
-					 "solidsim_output_lfn": form_data["solidsim_output_lfn"],
-					 "seed": 310 + ((run-1) * 5) + (i+1),
-//					 "jobnumber_start": run * 900 + (i*num_jobs)})
-			                 "jobnumber_start": run * 900 + (i*2),
-			                 "analysis_inputfile": form_data["analysis_inputfile"]})
-	}
-*/
     });
 
     function upload_data(data){
+//	console.log(JSON.stringify(data))	   
 	parent.$.fancybox.close();
 	$.ajax({url: "/api/requests",
 		type: "POST",
@@ -565,9 +550,7 @@ $(document).ready(function() {
                     parent.bootstrap_alert("success", "Success:", "Request added");
                     parent.$("#requests_table").DataTable().ajax.reload();
 		}
-	       });
-
-
+	});
     }
 
 });
