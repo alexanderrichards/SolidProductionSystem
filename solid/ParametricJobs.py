@@ -43,7 +43,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
-                                       .render(id='.'.join((self.request_id, self.id)),
+                                       .render(id='%d.%d' % (self.request_id, self.id),
                                                macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
                                                output_lfn=self.solidsim_output_lfn,
@@ -87,7 +87,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
-                                       .render(id='.'.join((self.request_id, self.id)),
+                                       .render(id='%d.%d' % (self.request_id, self.id),
                                                saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
                                                ro_output_lfndir=self.ro_output_lfndir.format,
