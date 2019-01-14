@@ -46,6 +46,7 @@ class SolidParametricJobs(ParametricJobs):
                                        .render(id='%d.%d' % (self.request_id, self.id),
                                                macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
+                                               solidsim_inputfiletype=self.solidsim_inputfiletype,
                                                output_lfn=self.solidsim_output_lfn,
                                                seed=self.seed,
                                                nevents=self.solidsim_nevents)
