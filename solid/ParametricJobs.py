@@ -53,8 +53,12 @@ class SolidParametricJobs(ParametricJobs):
             tmp_runscript.flush()
 
             if self.solidsim_macro == "cosmicsSim.mac":
-                
-                inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/atm-n-1000files/Gordon-Events-%d.txt' % i for i in range(1000)]
+                if self.solidsim_inputfiletype == 'atm-n':
+                    inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/atm-n-1000files/Gordon-Events-%d.txt' % i for i in range(1, 1001)]
+                elif  self.solidsim_inputfiletype == 'muons':
+                    inputdata_lfns = ['/solidexperiment.org/MC/cosmicGeneratorsFiles/2017/muons-1000files/Guan-Events-%d.txt' % i for i in range(1, 1001)]
+                else:
+                    inputdata_lfns = []
                 inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
                 job.setName("SoLid_{name}%(argjn)s".format(name={'atm-n': 'N_',
                                                                  'muons': 'mu_'}.get(self.solidsim_inputfiletype, '')))
