@@ -33,7 +33,8 @@ class SolidParametricJobs(ParametricJobs):
     day = SmartColumn(TEXT, allowed=True)
 
 
-    def _setup_dirac_job(self, job, tmp_runscript):
+    def _setup_dirac_job(self, DiracJob, tmp_runscript, tmp_filemanager):
+        job = DiracJob()
         if self.solidsim_version is not None:
             inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/SolidSim/%s/solid_g4_sim/input_macros/%s' %(self.solidsim_version, self.solidsim_macro)
             if self.solidsim_inputmacro:
