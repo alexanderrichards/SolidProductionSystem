@@ -2,7 +2,7 @@
 
 jobnumber=$1
 {% if macro == "cosmicsSim.mac" %}
-inputfile=-f $2
+inputfile="-f $2"
 {% else %}
 inputfile=
 {% endif %}
