@@ -73,9 +73,9 @@ echo -e "\n"
 
 output_dir=$(dirname "{{ output_lfn }}")
 {% if solidsim_inputfiletype == "atm-n" %}
-    output_filename={{ output_lfn }}/neutorns_${jobnumber}_{{ id }}.root
+    output_filename=neutorns_${jobnumber}_{{ id }}.root
 {% elif solidsim_inputfiletype == "muons" %}
-    output_filename={{ output_lfn }}/muons_${jobnumber}_{{ id }}.root
+    output_filename=muons_${jobnumber}_{{ id }}.root
 {% endif %}
 /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/solid-build/SolidSim /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/${Macro} -o ${output_filename} ${inputfile} -n {{ nevents }} -s ${randomseed} &> log.txt
 #-c /cvmfs/solidexperiment.egi.eu/el6/SolidSim/${Version}/solid_g4_sim/input_macros/phase1.config
