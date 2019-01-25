@@ -87,7 +87,7 @@ echo -e "\n"
 
 rm ${inputfile}
 rm mysql-connector-c++-1.1.8-linux-glibc2.5-x86-64bit.tar.gz
-rm S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-tuple_${jobnumber}_$runNUMBER.root log_${jobnumber}_$runNUMBER.txt
+rm S2-histos_cycleMode.root S2-tuple.root log.txt
 
 echo -e "\nList of production at the end ...\n"
 echo -e "\n"
