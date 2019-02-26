@@ -430,60 +430,64 @@ $(document).ready(function() {
                });
     });
 
-    function setup_simulation_job(form_data, data){
+    function setup_simulation_job(form_data){
 	var solidsim_macro = $("#solidsim_macro option:selected").text();
+	var parametricjobs = [];
 	if (solidsim_macro !== "cosmicsSim.mac"){
 	    if(!form_data['seed']){
 		form_data['seed'] = Math.floor(200000 + (Math.random() * 1800000));
 	    }
-	    form_data["num_jobs"] = 1;
-	    data["request"]["parametricjobs"].push(form_data);
+//	    form_data["num_jobs"] = 1;
+	    parametricjobs.push(form_data);
+//	    data["request"]["parametricjobs"].push(form_data);
 	}
 	else{
 	    var nevents = parseInt(form_data['solidsim_nevents']);
-	    form_data['num_jobs'] = 1000;
+//	    form_data['num_jobs'] = 1000;
 	    form_data['solidsim_nevents'] = 50000;
+	    var parametricjobs = [];
 	    for (var i=0; i<nevents; i++){
 		parametricjob = $.extend(true, {}, form_data);
 		parametricjob['jobnumber_start'] = i * 1000;
 		//console.log(parametricjob['jobnumber_start'])
 		parametricjob['seed'] = Math.floor(200000 + (Math.random() * 1800000));
-		//console.log(parametricjob['seed'])		     
-		data["request"]["parametricjobs"].push(parametricjob);
+		//console.log(parametricjob['seed'])
+		parametricjobs.push(parametricjob);
+//		data["request"]["parametricjobs"].push(parametricjob);
 	    }
 	}
-	upload_data(data);
+	return {"description": "Simulation job", "parametricjobs": parametricjobs};
+//	upload_data(data);
 //	return data;
     }
 				     
-    function setup_analysis_job(form_data, data){
+    function setup_analysis_job(form_data){
 	var days = form_data["days"].split(" - ");
 	var from_date = new Date(days[0]);
 	var to_date = new Date(days[1]);
 	var ndays = (to_date - from_date) / (1000 * 60 * 60 * 24);
-	form_data["num_jobs"] = 1;  // Temporary as num_jobs determined at submission time.
+//	form_data["num_jobs"] = 1;  // Temporary as num_jobs determined at submission time.
 	delete form_data["days"];
 	//form_data["analysis_inputmacro"] = form_data.analysis_inputmacro || '';
+	var parametricjobs = [];
 	for (var i=0; i<(ndays+1); i++){
 	    var d = new Date(from_date.valueOf());
 	    d.setDate(from_date.getDate() + i);
 	    //console.debug(form_data['analysis_inputmacro'])
 	    parametricjob = $.extend(true, {}, form_data);
 	    parametricjob["day"] = d.toISOString().split("T")[0];
-	    data["request"]["parametricjobs"].push(parametricjob);
+	    parametricjobs.push(parametricjob);
 	}
-	upload_data(data);
+	return {"description": "Analysis job", "parametricjobs": parametricjobs};
+//	upload_data(data);
 //	return data;
     }
 
-	$("form").submit(function(event){
-	event.preventDefault();  // prevent default submission as doesn't create json content.
-	var form_data = new Object();
-	$.each($(this).serializeArray(), function(index, mapping){
-	    form_data[mapping.name] = mapping.value;
-	});
-        
-	var data = {"request":{"description": "new request", "parametricjobs": []}};
+{{ super() }}
+
+{% endblock %}
+{% block create_request %}  
+//	var data = {"request":{"description": "new request", "parametricjobs": []}};
 
 	if ($("#reduction_toggle").prop("checked")){
             var g = $("#analysis_inputmacro").prop("files")[0];
@@ -493,7 +497,7 @@ $(document).ready(function() {
 		    var r = new FileReader();
 		    r.onload = function(e) {
 			form_data["analysis_inputmacro"] = e.target.result;
-			setup_analysis_job(form_data, data);
+			return setup_analysis_job(form_data);
 		    }
 		    r.readAsText(g);
 		}
@@ -503,13 +507,11 @@ $(document).ready(function() {
 		}
             }
             else{
-		setup_analysis_job(form_data, data);
+		return setup_analysis_job(form_data);
             } 
 	}
 	else if($("#ro_toggle").prop("checked")){
-	    form_data["num_jobs"] = 1;  // Temporary as num_jobs determined at submission time.
-	    data["request"]["parametricjobs"].push(form_data);
-	    upload_data(data);
+	    return {"description": "new, request", "parametricjobs": [form_data]};
 	}
 	else if($("#sim_toggle").prop("checked")){
             var g = $("#solidsim_inputmacro").prop("files")[0];
@@ -519,7 +521,7 @@ $(document).ready(function() {
 		    var r = new FileReader();
 		    r.onload = function(e) {
 			form_data["solidsim_inputmacro"] = e.target.result;
-			setup_simulation_job(form_data, data);
+			return setup_simulation_job(form_data);
 		    }
 		    r.readAsText(g);
 		}
@@ -529,29 +531,10 @@ $(document).ready(function() {
 		}
             }
             else{
-		setup_simulation_job(form_data, data);
+		return setup_simulation_job(form_data);
             }   
 	}
     });
-
-    function upload_data(data){
-//	console.log(JSON.stringify(data))	   
-	parent.$.fancybox.close();
-	$.ajax({url: "/api/requests",
-		type: "POST",
-		data: JSON.stringify(data),
-		contentType: "application/json; charset=utf-8",
-		error: function(jqXHR, testStatus, errorThrown){
-                    console.error(`Failed to create new requests.\n--------\nStatus: ${textStatus}\nError: ${errorThrown}\n--------\n${jqXHR.responseText}`);
-                    parent.bootstrap_alert("danger", "ERROR:", "Failed to create new requests!");
-		},
-		success: function(response, status, request){
-                    console.log("Request created");
-                    parent.bootstrap_alert("success", "Success:", "Request added");
-                    parent.$("#requests_table").DataTable().ajax.reload();
-		}
-	});
-    }
 
 });
 {% endblock %}

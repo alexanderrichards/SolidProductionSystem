@@ -123,7 +123,7 @@ class SolidParametricJobs(ParametricJobs):
  
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-            self.num_jobs = len(inputdata_filenames)
+            #self.num_jobs = len(inputdata_filenames)
 
             job.setName("SoLid_ro_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
@@ -178,7 +178,7 @@ class SolidParametricJobs(ParametricJobs):
 
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-            self.num_jobs = len(inputdata_filenames)
+            #self.num_jobs = len(inputdata_filenames)
 
             job.setName("SoLid_data_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
