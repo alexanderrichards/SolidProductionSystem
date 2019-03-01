@@ -123,7 +123,7 @@ class SolidParametricJobs(ParametricJobs):
  
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-            self.num_jobs = len(inputdata_filenames)
+            #self.num_jobs = len(inputdata_filenames)
 
             job.setName("SoLid_ro_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
@@ -178,13 +178,13 @@ class SolidParametricJobs(ParametricJobs):
 
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-            self.num_jobs = len(inputdata_filenames)
+            #self.num_jobs = len(inputdata_filenames)
 
             job.setName("SoLid_data_%(jobno)s")
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('ANY')
-    #        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
-            job.setDestination('ANY')
+            job.setDestination('LCG.BEgrid-ULB-VUB.be')
+    #        job.setDestination('ANY')
             job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
     #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
             job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
