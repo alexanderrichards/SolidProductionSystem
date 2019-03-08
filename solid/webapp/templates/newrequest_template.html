@@ -22,6 +22,25 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
+function upload_data(request_data){
+	$.ajax({
+		url: "/api/requests",
+		type: "POST",
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify({request: request_data}),
+		error: function(jqXHR, textStatus, errorThrown){
+			console.error(`Failed to create new requests.\n--------\nStatus: ${textStatus}\nError: ${errorThrown}\n--------\n${jqXHR.responseText}`);
+			parent.bootstrap_alert("danger", "ERROR:", "Failed to create new requests!");
+		},
+		success: function(response, status, request){
+			console.log("Request created");
+			parent.bootstrap_alert("success", "Success:", "Request added");
+			parent.$("#requests_table").DataTable().ajax.reload();
+		}
+	});
+
+}
+
 function setup_simulation_job(form_data){
 	var solidsim_macro = $("#solidsim_macro option:selected").text();
 	var parametricjobs = [];
@@ -48,7 +67,7 @@ function setup_simulation_job(form_data){
 //		data["request"]["parametricjobs"].push(parametricjob);
 		}
 	}
-	return {"description": "Simulation job", "parametricjobs": parametricjobs};
+	upload_data({"description": "Simulation job", "parametricjobs": parametricjobs});
 //	upload_data(data);
 //	return data;
 }
@@ -70,7 +89,7 @@ function setup_analysis_job(form_data){
 		parametricjob["day"] = d.toISOString().split("T")[0];
 		parametricjobs.push(parametricjob);
 	}
-	return {"description": "Analysis job", "parametricjobs": parametricjobs};
+	upload_data({"description": "Analysis job", "parametricjobs": parametricjobs});
 //	upload_data(data);
 //	return data;
 }
@@ -483,58 +502,64 @@ function setup_analysis_job(form_data){
                });
     });
 
-{{ super() }}
+    $("form").submit(function(event){
+        event.preventDefault();  // prevent default submission as doesn't create json content.
+        parent.$.fancybox.close();
 
-{% endblock %}
-{% block create_request %}  
-//	var data = {"request":{"description": "new request", "parametricjobs": []}};
+        var form_data = new Object();
+	    $.each($("form").serializeArray(), function(index, mapping){
+	      form_data[mapping.name] = mapping.value;
+	    });
 
-	if ($("#reduction_toggle").prop("checked")){
-        var g = $("#analysis_inputmacro").prop("files")[0];
-        if (g){
-			// Check for the various File API support.
-			if (window.File && window.FileReader && window.FileList && window.Blob){
-		    	var r = new FileReader();
-		    	r.onload = function(e) {
-					form_data["analysis_inputmacro"] = e.target.result;
-					return setup_analysis_job(form_data);
-		    	}
-		    	r.readAsText(g);
-			}
-			else {
-		    	bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
-		    	throw "File API not supported by your browser."
-			}
-        }
-        else{
-			return setup_analysis_job(form_data);
-        }
-	}
-	else if($("#ro_toggle").prop("checked")){
-	    return {"description": "new, request", "parametricjobs": [form_data]};
-	}
-	else if($("#sim_toggle").prop("checked")){
-            var g = $("#solidsim_inputmacro").prop("files")[0];
-            if (g){
+		if ($("#reduction_toggle").prop("checked")){
+			var g = $("#analysis_inputmacro").prop("files")[0];
+			if (g){
 				// Check for the various File API support.
 				if (window.File && window.FileReader && window.FileList && window.Blob){
-				    var r = new FileReader();
-		    		r.onload = function(e) {
-						form_data["solidsim_inputmacro"] = e.target.result;
-						return setup_simulation_job(form_data);
-		    		}
-		    		r.readAsText(g);
+					var r = new FileReader();
+					r.onload = function(e) {
+						form_data["analysis_inputmacro"] = e.target.result;
+						setup_analysis_job(form_data);
+					}
+					r.readAsText(g);
 				}
 				else {
-			    	bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
-		    		throw "File API not supported by your browser."
+					bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+					throw "File API not supported by your browser."
 				}
-    		}
-		    else{
-				return setup_simulation_job(form_data);
-    		}
-	}
-	else{
-		throw "No toggles set."
-	}
+			}
+			else{
+				setup_analysis_job(form_data);
+			}
+		}
+		else if($("#ro_toggle").prop("checked")){
+			upload_data({"description": "new, request", "parametricjobs": [form_data]});
+		}
+		else if($("#sim_toggle").prop("checked")){
+				var g = $("#solidsim_inputmacro").prop("files")[0];
+				if (g){
+					// Check for the various File API support.
+					if (window.File && window.FileReader && window.FileList && window.Blob){
+						var r = new FileReader();
+						r.onload = function(e) {
+							form_data["solidsim_inputmacro"] = e.target.result;
+							setup_simulation_job(form_data);
+						}
+						r.readAsText(g);
+					}
+					else {
+						bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+						throw "File API not supported by your browser."
+					}
+				}
+				else{
+					setup_simulation_job(form_data);
+				}
+		}
+		else{
+			throw "No toggles set."
+		}
+    });
+
+
 {% endblock %}
