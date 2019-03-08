@@ -187,7 +187,8 @@ class SolidParametricJobs(ParametricJobs):
     #        job.setDestination('ANY')
             job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
     #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
-            job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
+     #       job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
+            job.setParameterSequence('InputSandbox', [':'.join(('LFN', lfn)) for lfn in inputdata_lfns], addToWorkflow='ParametricInputSandbox')
             job.setParameterSequence('jobno', job_numbers, addToWorkflow=False)
             job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)
         return job
