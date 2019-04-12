@@ -10,6 +10,7 @@ setup(
         'dbmodels': ['parametricjobs = solid.ParametricJobs:SolidParametricJobs'],
         'webapp': ['jinja2_loader = solid.webapp:solid_jinja2_loader']
     },
+    package_data={'solid': ['templates/*', 'webapp/templates/*']},
     # metadata for upload to PyPI
     author="Alexander Richards",
     author_email="a.richards@imperial.ac.uk",
