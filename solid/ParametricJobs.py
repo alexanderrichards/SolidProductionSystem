@@ -65,7 +65,7 @@ class SolidParametricJobs(ParametricJobs):
                 job.setName("SoLid_{name}%(argjn)s".format(name={'atm-n': 'N_',
                                                                  'muons': 'mu_'}.get(self.solidsim_inputfiletype, '')))
                 job.setPlatform('EL7')
-                job.setDestination('ANY')
+                job.setDestination(['UKI-LT2-IC-HEP.uk', 'UKI-NORTHGRID-MAN-HEP.uk', 'UKI-SOUTHGRID-OX-HEP.uk', 'BEgrid-ULB-VUB.be'])
                 job.setInputSandbox([tmp_runscript.name, inputmacro])
                 job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
                 job.setParameterSequence('argjn', range(self.jobnumber_start, self.jobnumber_start + len(inputdata_lfns)), addToWorkflow=False)
@@ -74,7 +74,7 @@ class SolidParametricJobs(ParametricJobs):
             else:
                 job.setName("SoLid_Simulation_%s.%s" % (self.request_id, self.id))
                 job.setPlatform('EL7')
-                job.setDestination('ANY')
+                job.setDestination(['UKI-LT2-IC-HEP.uk', 'UKI-NORTHGRID-MAN-HEP.uk', 'UKI-SOUTHGRID-OX-HEP.uk', 'BEgrid-ULB-VUB.be'])
                 job.setInputSandbox([tmp_runscript.name, inputmacro])
                 job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%s.%s' % (self.request_id, self.id))
         elif self.saffron2_ro_version is not None:
@@ -129,7 +129,7 @@ class SolidParametricJobs(ParametricJobs):
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('EL7')
     #        job.setDestination('LCG.UKI-LT2-IC-HEP.uk')
-            job.setDestination('ANY')
+            job.setDestination(['UKI-LT2-IC-HEP.uk', 'UKI-NORTHGRID-MAN-HEP.uk', 'UKI-SOUTHGRID-OX-HEP.uk', 'BEgrid-ULB-VUB.be'])
             job.setInputSandbox([tmp_runscript.name, inputmacro, ro_baseline_lfn])
     #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
             job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
@@ -184,7 +184,7 @@ class SolidParametricJobs(ParametricJobs):
             job.setExecutable(os.path.basename(tmp_runscript.name), arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('ANY')
     #        job.setDestination('LCG.BEgrid-ULB-VUB.be')
-            job.setDestination('ANY')
+            job.setDestination(['UKI-LT2-IC-HEP.uk', 'UKI-NORTHGRID-MAN-HEP.uk', 'UKI-SOUTHGRID-OX-HEP.uk', 'BEgrid-ULB-VUB.be'])
             job.setInputSandbox([tmp_runscript.name, inputmacro, 'LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
     #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
      #       job.setParameterSequence('InputData', inputdata_lfns, addToWorkflow='ParametricInputData')
