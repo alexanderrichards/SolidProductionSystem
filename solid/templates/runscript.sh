@@ -64,7 +64,7 @@ ls -l
 echo -e "\n"
 
 file=${inputfile}
-read num1 num2 num3 num4 <<<${file //[^0-9]/ }
+read num1 num2 num3 num4 <<<${file//[^0-9]/ }
 runNUMBER=$num1
 runTime=$num4
 echo -e "runNumber and runTime is"
