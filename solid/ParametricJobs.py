@@ -1,4 +1,4 @@
-"""Solid Parametric Jobs."""
+"""Solid Parametric Jobs."""  # pylint: disable=invalid-name
 import os
 import tempfile
 from copy import deepcopy
@@ -22,7 +22,7 @@ class SolidParametricJobs(ParametricJobs):
     saffron2_ro_version = SmartColumn(TEXT, allowed=True)
     ro_macro = SmartColumn(TEXT, allowed=True)
     ro_inputmacro = SmartColumn(TEXT, allowed=True)
-    ro_runNumber = SmartColumn(TEXT, allowed=True)   
+    ro_runNumber = SmartColumn(TEXT, allowed=True)
     ro_baselinetype = SmartColumn(TEXT, allowed=True)
     ro_input_lfndir = SmartColumn(TEXT, allowed=True)
     ro_output_lfndir = SmartColumn(TEXT, allowed=True)
@@ -35,7 +35,7 @@ class SolidParametricJobs(ParametricJobs):
     analysis_output_lfndir = SmartColumn(TEXT, allowed=True)
     day = SmartColumn(TEXT, allowed=True)
 
-    def _setup_dirac_job(self, DiracJob, tmp_runscript, tmp_filemanager):
+    def _setup_dirac_job(self, DiracJob, tmp_runscript, tmp_filemanager):  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
         job = DiracJob()
         if self.solidsim_version is not None:
             inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/SolidSim/%s/solid_g4_sim/' \
@@ -103,11 +103,11 @@ class SolidParametricJobs(ParametricJobs):
             if self.ro_baselinetype == "April-2018":
                 ro_baseline_lfn = 'LFN:/solidexperiment.org/Data/phase1_BR2/' \
                                   'april2018-baselines.root'
-                self.runNumber = 1030000
+                self.runNumber = 1030000  # pylint: disable=invalid-name, attribute-defined-outside-init
             else:
                 ro_baseline_lfn = 'LFN:/solidexperiment.org/Data/phase1_BR2/' \
                                   'december2017-baselines.root'
-                self.runNumber = 1010000
+                self.runNumber = 1010000  # pylint: disable=attribute-defined-outside-init
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
@@ -115,32 +115,32 @@ class SolidParametricJobs(ParametricJobs):
                                                saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
                                                ro_output_lfndir=self.ro_output_lfndir.format,
-                                               ro_runNumber=self.runNumber)            
+                                               ro_runNumber=self.runNumber)
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
-                
+
             input_directory_path = self.ro_input_lfndir
             with dirac_rpc_client("DataManagement/FileCatalog") as rpcclient:
                 dir_content = deepcopy(rpcclient.listDirectory(input_directory_path, False))
             if not dir_content["OK"]:
                 self.logger.error("Failed to contact DIRAC server for %s", input_directory_path)
                 self.logger.error(dir_content['Message'])
-                raise RuntimeError("Failed to contact DIRAC server for %s", input_directory_path)
+                raise RuntimeError("Failed to contact DIRAC server for %s" % input_directory_path)
 
             if input_directory_path in dir_content['Value']['Failed']:
                 self.logger.error("Could not access %s, maybe it doesn't exist?",
                                   input_directory_path)
-                raise RuntimeError("Could not access %s, maybe it doesn't exist?",
-                                   input_directory_path)
+                raise RuntimeError("Could not access %s, maybe it doesn't exist?"
+                                   % input_directory_path)
             files = dir_content['Value']['Successful'][input_directory_path]['Files']
-                
+
             inputdata_lfns = []
             for filename in files.keys():
                 if not filename.endswith('.root'):
                     continue
     #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
                 inputdata_lfns.append(os.path.join(input_directory_path, filename))
- 
+
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             # self.num_jobs = len(inputdata_filenames)
@@ -157,7 +157,7 @@ class SolidParametricJobs(ParametricJobs):
             job.setParameterSequence('InputData', inputdata_lfns,
                                      addToWorkflow='ParametricInputData')
             job.setParameterSequence('jobno', job_numbers, addToWorkflow=False)
-            job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)               
+            job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)
         else:
             inputmacro = '/cvmfs/solidexperiment.egi.eu/el6/saffron2/%s/saffron2/ops/%s'\
                          % (self.saffron2_analysis_version, self.analysis_macro)
@@ -186,11 +186,11 @@ class SolidParametricJobs(ParametricJobs):
             if not dir_content["OK"]:
                 self.logger.error("Failed to contact DIRAC server for %s", directory_path)
                 self.logger.error(dir_content['Message'])
-                raise RuntimeError("Failed to contact DIRAC server for %s", directory_path)
+                raise RuntimeError("Failed to contact DIRAC server for %s" % directory_path)
 
             if directory_path in dir_content['Value']['Failed']:
                 self.logger.error("Could not access %s, maybe it doesn't exist?", directory_path)
-                raise RuntimeError("Could not access %s, maybe it doesn't exist?", directory_path)
+                raise RuntimeError("Could not access %s, maybe it doesn't exist?" % directory_path)
 
             # doesn't look like a walk is needed.
             # subdirs = dir_content['Value']['Successful'][directory_path]['SubDirs']
