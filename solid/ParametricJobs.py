@@ -101,13 +101,13 @@ class SolidParametricJobs(ParametricJobs):
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
                 
-            input_directory_path=ro_input_lfndir
+            input_directory_path=self.ro_input_lfndir
             with dirac_rpc_client("DataManagement/FileCatalog") as rpcclient:
                 dir_content = deepcopy(rpcclient.listDirectory(directory_path, False))
             if not dir_content["OK"]:
-                self.logger.error("Failed to contact DIRAC server for %s", directory_path)
+                self.logger.error("Failed to contact DIRAC server for %s", input_directory_path)
                 self.logger.error(dir_content['Message'])
-                raise RuntimeError("Failed to contact DIRAC server for %s", directory_path)
+                raise RuntimeError("Failed to contact DIRAC server for %s", input_directory_path)
 
             if input_directory_path in dir_content['Value']['Failed']:
                 self.logger.error("Could not access %s, maybe it doesn't exist?", input_directory_path)
