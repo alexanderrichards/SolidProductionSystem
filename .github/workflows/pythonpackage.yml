@@ -32,8 +32,8 @@ jobs:
     - name: Lint with pylint
       run: |
         pip install pylint
-        pylint .
+        pylint solid
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest
+        pytest solid
