@@ -47,7 +47,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
-                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type,bad-option-value
+                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
                                                macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
                                                solidsim_inputfiletype=self.solidsim_inputfiletype,
