@@ -111,7 +111,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
-                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type,bad-option-value
+                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
                                                saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
                                                ro_output_lfndir=self.ro_output_lfndir.format,
