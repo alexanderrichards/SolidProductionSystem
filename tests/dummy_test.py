@@ -1,5 +1,7 @@
+"""Testing Stub."""
 import unittest
-import solid
+# import solid
+
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
