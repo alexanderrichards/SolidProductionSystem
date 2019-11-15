@@ -47,7 +47,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
-                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type
+                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type,bad-option-value
                                                macro=os.path.basename(inputmacro),
                                                version=self.solidsim_version,
                                                solidsim_inputfiletype=self.solidsim_inputfiletype,
@@ -111,7 +111,7 @@ class SolidParametricJobs(ParametricJobs):
 
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
-                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type
+                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-string-format-type,bad-option-value
                                                saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
                                                ro_output_lfndir=self.ro_output_lfndir.format,
