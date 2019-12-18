@@ -6,6 +6,7 @@ Version={{ saffron2_version }}
 Patch=patch4
 echo -e "arguments="
 echo $jobnumber
+echo {{ id }}
 echo $inputfile
 echo {{ day }}
 echo $Version
