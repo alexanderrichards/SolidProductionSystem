@@ -70,8 +70,13 @@ runTime=$num4
 echo -e "runNumber and runTime is"
 echo $runNUMBER $runTime
 
-bzip2 -d ${inputfile}
-inputfile=${inputfile%.bz2}
+
+if [[ ${inputfile} = *?.bz2 ]]
+then
+  bzip2 -d ${inputfile}
+  inputfile=${inputfile%.bz2}    
+fi
+
 
 /cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
