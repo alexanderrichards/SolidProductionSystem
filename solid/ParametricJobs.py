@@ -197,8 +197,8 @@ class SolidParametricJobs(ParametricJobs):
             files = dir_content['Value']['Successful'][directory_path]['Files']
 
             inputdata_lfns = []
-            for filename in files.keys():
-                if not filename.endswith('.sbf.bz2'):
+            for filename in files.keys():                   
+                if not filename.endswith('.sbf.bz2') and '.'.join((filename, 'bz2')) in files:
                     continue
     #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
                 inputdata_lfns.append(os.path.join(directory_path, filename))
