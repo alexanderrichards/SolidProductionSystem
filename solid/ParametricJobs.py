@@ -170,7 +170,8 @@ class SolidParametricJobs(ParametricJobs):
                                                                                              "_"))
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
-                                       .render(day=self.day.replace("-", "_"),
+                                       .render(id='%d.%d' % (self.request_id, self.id),
+                                               day=self.day.replace("-", "_"),
                                                saffron2_version=self.saffron2_analysis_version,
                                                macro=os.path.basename(inputmacro),
                                                analysis_output_lfndir=analysis_output_lfndir)
