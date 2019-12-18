@@ -170,7 +170,8 @@ class SolidParametricJobs(ParametricJobs):
                                                                                              "_"))
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
-                                       .render(day=self.day.replace("-", "_"),
+                                       .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
+                                               day=self.day.replace("-", "_"),
                                                saffron2_version=self.saffron2_analysis_version,
                                                macro=os.path.basename(inputmacro),
                                                analysis_output_lfndir=analysis_output_lfndir)
@@ -198,7 +199,7 @@ class SolidParametricJobs(ParametricJobs):
 
             inputdata_lfns = []
             for filename in files.keys():
-                if not filename.endswith('.sbf.bz2'):
+                if not filename.endswith('.sbf.bz2') and (filename + '.bz2') in files:
                     continue
     #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
                 inputdata_lfns.append(os.path.join(directory_path, filename))
