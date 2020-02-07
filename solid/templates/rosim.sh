@@ -67,7 +67,7 @@ echo -e "\n"
 mv april2018-baselines.root baselines.root
 mv december2017-baselines.root baselines.root
 
-/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber={{ ro_runNumber }} --AppendInputFiles=${inputfile} &> log.txt
+/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber=1030000 --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
 
 dirac-dms-add-file {{ ro_output_lfndir }}/histos/S2-histos_cycleMode_${jobnumber}_${runNUMBER}_{{ id }}.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
