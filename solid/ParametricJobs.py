@@ -154,8 +154,9 @@ class SolidParametricJobs(ParametricJobs):
                                 'LCG.UKI-SOUTHGRID-OX-HEP.uk', 'LCG.BEgrid-ULB-VUB.be'])
             job.setInputSandbox([tmp_runscript.name, inputmacro, ro_baseline_lfn])
     #        job.setInputData(['LFN:/solidexperiment.org/Data/phase1_BR2/baselines.root'])
-            job.setParameterSequence('InputData', inputdata_lfns,
-                                     addToWorkflow='ParametricInputData')
+            job.setParameterSequence('InputSandbox', [':'.join(('LFN', lfn))
+                                                      for lfn in inputdata_lfns],
+                                     addToWorkflow='ParametricInputSandbox')
             job.setParameterSequence('jobno', job_numbers, addToWorkflow=False)
             job.setParameterSequence('inputdata_filename', inputdata_filenames, addToWorkflow=False)
         else:
