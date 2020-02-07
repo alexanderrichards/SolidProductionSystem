@@ -533,7 +533,25 @@ function setup_analysis_job(form_data){
 			}
 		}
 		else if($("#ro_toggle").prop("checked")){
-			upload_data({"description": "new, request", "parametricjobs": [form_data]});
+			var g = $("#ro_inputmacro").prop("files")[0];
+			if (g){
+				// Check for the various File API support.
+				if (window.File && window.FileReader && window.FileList && window.Blob){
+					var r = new FileReader();
+					r.onload = function(e) {
+						form_data["ro_inputmacro"] = e.target.result;
+		                                upload_data({"description": "new, request", "parametricjobs": [form_data]});
+					}
+					r.readAsText(g);
+				}
+				else {
+					bootstrap_alert("danger", "ERROR:", "The File APIs are not fully supported by your browser.");
+					throw "File API not supported by your browser."
+				}
+			}
+			else{
+		                upload_data({"description": "new, request", "parametricjobs": [form_data]});
+			}
 		}
 		else if($("#sim_toggle").prop("checked")){
 				var g = $("#solidsim_inputmacro").prop("files")[0];
