@@ -119,7 +119,7 @@ class SolidParametricJobs(ParametricJobs):
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
 
-            input_directory_path = self.ro_input_lfndir
+            input_directory_path = self.ro_input_lfndir.rstrip('/')
             with dirac_rpc_client("DataManagement/FileCatalog") as rpcclient:
                 dir_content = deepcopy(rpcclient.listDirectory(input_directory_path, False))
             if not dir_content["OK"]:
