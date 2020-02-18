@@ -114,7 +114,7 @@ class SolidParametricJobs(ParametricJobs):
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
                                                saffron2_version=self.saffron2_ro_version,
                                                macro=os.path.basename(inputmacro),
-                                               ro_output_lfndir=self.ro_output_lfndir.format,
+                                               ro_output_lfndir=self.ro_output_lfndir.rstrip('/'),
                                                ro_runNumber=self.runNumber)
             tmp_runscript.write(runscript_template)
             tmp_runscript.flush()
