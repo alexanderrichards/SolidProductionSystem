@@ -44,6 +44,7 @@ class SolidParametricJobs(ParametricJobs):
                 with tempfile.NamedTemporaryFile(delete=False) as tempmacro:
                     tempmacro.write(self.solidsim_inputmacro)
                 inputmacro = tempmacro.name
+
             # pylint: disable=bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
