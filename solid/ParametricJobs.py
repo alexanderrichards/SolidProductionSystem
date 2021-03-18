@@ -45,7 +45,7 @@ class SolidParametricJobs(ParametricJobs):
                     tempmacro.write(self.solidsim_inputmacro)
                 inputmacro = tempmacro.name
 
-            # pylint: disable=bad-string-format-type
+            # pylint: disable=E1307
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
