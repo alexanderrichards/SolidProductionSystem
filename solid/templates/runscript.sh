@@ -47,7 +47,8 @@ echo -e "\n"
 source /cvmfs/sft.cern.ch/lcg/releases/gcc/6.2.0/x86_64-slc6/setup.sh
 source /cvmfs/sft.cern.ch/lcg/releases/Geant4/10.03.p01-8919f/x86_64-slc6-gcc62-opt/bin/geant4.sh
 source /cvmfs/sft.cern.ch/lcg/releases/clhep/2.3.4.4-adaae/x86_64-slc6-gcc62-opt/CLHEP-env.sh
-source /cvmfs/sft.cern.ch/lcg/releases/ROOT/6.08.06-b32f2/x86_64-slc6-gcc62-opt/bin/thisroot.sh
+source /cvmfs/solidexperiment.egi.eu/el6/software/build/root_build/bin/thisroot.sh
+#source /cvmfs/sft.cern.ch/lcg/releases/ROOT/6.08.06-b32f2/x86_64-slc6-gcc62-opt/bin/thisroot.sh
 #source /cvmfs/sft.cern.ch/lcg/releases/ROOT/6.02.10-617d9/x86_64-slc6-gcc49-opt/bin/thisroot.sh
 
 export PATH=/cvmfs/sft.cern.ch/lcg/releases/CMake/3.7.0-a8e5d/x86_64-slc6-gcc62-opt/bin/:${PATH}
@@ -78,15 +79,22 @@ then
   inputfile=${inputfile%.bz2}    
 fi
 
-
+#Processing
 /cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/saffron {{macro}} --RunNumber=$runNUMBER --AppendInputFiles=${inputfile} &> log.txt
 #/cvmfs/solidexperiment.egi.eu/el6/saffron2/v1.2/saffron2/saffron onlineMonitoringBR2.txt --RunNumber=1002808 --AppendInputFiles=rundetector_1002808_06Dec17_1908.sbf
 
+#set the local environment up
+source /cvmfs/solidexperiment.egi.eu/el6/software/bashrc
+
+#Post processing
+root -l -b -q '/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/BiPonatorPostProcessing/Saffron_PostProcessing.cpp++("'S2-ClusterExtraction_${runNUMBER}.root'","'S2-tuple_${runNUMBER}.root'","'./'","'/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/BiPonatorPostProcessing/'")' &> PostPro_log.txt
+
 dirac-dms-add-file {{ analysis_output_lfndir }}/histos/S2-histos_cycleMode_${runNUMBER}_${runTime}_{{ id }}.root S2-histos_cycleMode_${runNUMBER}.root UKI-LT2-IC-HEP-disk
 dirac-dms-add-file {{ analysis_output_lfndir }}/ntuples/S2-tuple_${runNUMBER}_${runTime}_{{ id }}.root S2-tuple_${runNUMBER}.root UKI-LT2-IC-HEP-disk
-dirac-dms-add-file {{ analysis_output_lfndir }}/ntuples/S2-ClusterExtraction_${runNUMBER}_${runTime}_{{ id }}.root S2-ClusterExtraction_${runNUMBER}.root UKI-LT2-IC-HEP-disk
 dirac-dms-add-file {{ analysis_output_lfndir }}/logs/log_${runNUMBER}_${runTime}_{{ id }}.txt log.txt UKI-LT2-IC-HEP-disk
+dirac-dms-add-file {{ analysis_output_lfndir }}/logs/PostPro_log_${runNUMBER}_${runTime}_{{ id }}.txt PostPro_log.txt UKI-LT2-IC-HEP-disk
 
+#dirac-dms-add-file {{ analysis_output_lfndir }}/ntuples/S2-ClusterExtraction_${runNUMBER}_${runTime}_{{ id }}.root S2-ClusterExtraction_${runNUMBER}.root UKI-LT2-IC-HEP-disk
 #dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/test/test_grid/S2-histos_cycleMode_${jobnumber}_$runNUMBER.root S2-histos_cycleMode.root UKI-LT2-IC-HEP-disk
 #dirac-dms-add-file /solidexperiment.org/Data/phase1_BR2/test/test_grid/S2_${jobnumber}_$runNUMBER.root S2-tuple.root UKI-LT2-IC-HEP-disk
 
@@ -96,7 +104,7 @@ echo -e "\n"
 
 rm ${inputfile}
 rm mysql-connector-c++-1.1.8-linux-glibc2.5-x86-64bit.tar.gz
-rm S2-histos_cycleMode_${runNUMBER}.root S2-tuple_${runNUMBER}.root S2-ClusterExtraction_${runNUMBER}.root log.txt
+rm *.root *.txt
 
 echo -e "\nList of production at the end ...\n"
 echo -e "\n"
