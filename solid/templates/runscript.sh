@@ -87,35 +87,17 @@ echo -e "\n"
 ls -l
 echo -e "\n"
 
+(
 #set the local environment up
 source /cvmfs/solidexperiment.egi.eu/el6/software/bashrc
 
 #Post processing
-root -l -b -q '/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/BiPonatorPostProcessing/Saffron_PostProcessing.cpp++("'S2-ClusterExtraction_${runNUMBER}.root'","'S2-tuple_${runNUMBER}.root'","'./'","'/cvmfs/solidexperiment.egi.eu/el6/saffron2/${Version}/saffron2/BiPonatorPostProcessing/'")' &> PostPro_log.txt
+root -l -b -q '/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/Saffron_PostProcessing.cpp++("'S2-ClusterExtraction_'${runNUMBER}'.root'","'S2-tuple_'${runNUMBER}'.root'","'./'","'/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/'")' &> PostPro_log.txt
 
 echo -e "\n"
 ls -l
 echo -e "\n"
-
-# set up again the invironment for using dirac
-unset LD_LIBRARY_PATH
-unset PKG_CONFIG_PATH
-unset PYTHONPATH
-sleep 2
-echo -e "\n Checking the environment \n"
-ghostname=`hostname --long 2>&1`
-gipname=`hostname --ip-address 2>&1`
-echo $ghostname "has address" $gipname
-uname -a
-cat /etc/redhat-release
-env | sort
-
-echo "ls -l /cvmfs/solidexperiment.egi.eu"
-ls -l /cvmfs/solidexperiment.egi.eu
-
-echo -e " \n ================================== \n"
-
-dirac-proxy-info
+)
 
 dirac-dms-add-file {{ analysis_output_lfndir }}/histos/S2-histos_cycleMode_${runNUMBER}_${runTime}_{{ id }}.root S2-histos_cycleMode_${runNUMBER}.root UKI-LT2-IC-HEP-disk
 dirac-dms-add-file {{ analysis_output_lfndir }}/ntuples/S2-tuple_${runNUMBER}_${runTime}_{{ id }}.root S2-tuple_${runNUMBER}.root UKI-LT2-IC-HEP-disk
