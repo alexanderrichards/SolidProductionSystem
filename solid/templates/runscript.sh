@@ -92,7 +92,7 @@ echo -e "\n"
 source /cvmfs/solidexperiment.egi.eu/el6/software/bashrc
 
 #Post processing
-root -l -b -q '/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/Saffron_PostProcessing.cpp++("'S2-ClusterExtraction_'${runNUMBER}'.root'","'S2-tuple_'${runNUMBER}'.root'","'./'","'/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/'")' &> PostPro_log.txt
+root -l -b -q '/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/Saffron_PostProcessing.cpp++("S2-ClusterExtraction_'${runNUMBER}'.root","S2-tuple_'${runNUMBER}'.root","./","/cvmfs/solidexperiment.egi.eu/el6/saffron2/'${Version}'/saffron2/BiPonatorPostProcessing/")' &> PostPro_log.txt
 
 echo -e "\n"
 ls -l
