@@ -38,14 +38,14 @@ echo -e "\n"
 
 # Function to run a command multiple times until successful
 with_retry() {
-  for i in 1 2 3; do
+  for i in 1 2 3 4 5 6 7 8 9 10; do
     echo "Running $@ attempt $i..."
     "$@"
     if [ "$?" -eq "0" ]; then
       return 0 # Command successful
     fi
     # Wait up to 20 seconds before retrying
-    sleep $(($RANDOM % 20))
+    sleep 20
   done
   echo "All attempts to run $@ failed."
   return 1 # All attempts failed
