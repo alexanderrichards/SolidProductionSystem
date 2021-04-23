@@ -72,6 +72,8 @@ ls -l
 echo -e "\n"
 
 output_dir=$(dirname "{{ output_lfn }}")
+output_filename=simulation_${jobnumber}_{{ id }}.root
+
 {% if solidsim_inputfiletype == "atm-n" %}
     output_filename=neutorns_${jobnumber}_{{ id }}.root
 {% elif solidsim_inputfiletype == "muons" %}
