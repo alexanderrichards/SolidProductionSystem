@@ -146,7 +146,8 @@ class SolidParametricJobs(ParametricJobs):
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             # self.num_jobs = len(inputdata_filenames)
 
-            job.setName("SoLid_{request!s}.{job!s}_ro_%(jobno)s".format(request=self.request_id, job=self.id))
+            job.setName("SoLid_{request!s}.{job!s}_ro_%(jobno)s".format(
+                request=self.request_id, job=self.id))
             job.setExecutable(os.path.basename(tmp_runscript.name),
                               arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('EL7')
@@ -210,7 +211,8 @@ class SolidParametricJobs(ParametricJobs):
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             # self.num_jobs = len(inputdata_filenames)
 
-            job.setName("SoLid_{request!s}.{job!s}_data_%(jobno)s".format(request=self.request_id, job=self.id))
+            job.setName("SoLid_{request!s}.{job!s}_data_%(jobno)s".format(
+                request=self.request_id, job=self.id))
             job.setExecutable(os.path.basename(tmp_runscript.name),
                               arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('ANY')
