@@ -45,6 +45,7 @@ class SolidParametricJobs(ParametricJobs):
                     tempmacro.write(self.solidsim_inputmacro)
                 inputmacro = tempmacro.name
 
+            # pylint: disable=bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
@@ -110,6 +111,7 @@ class SolidParametricJobs(ParametricJobs):
                                   'december2017-baselines.root'
                 self.runNumber = 1010000  # pylint: disable=attribute-defined-outside-init
 
+            # pylint: disable=bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
@@ -171,6 +173,7 @@ class SolidParametricJobs(ParametricJobs):
 
             analysis_output_lfndir = self.analysis_output_lfndir.format(day=self.day.replace("-",
                                                                                              "_"))
+            # pylint: disable=bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
