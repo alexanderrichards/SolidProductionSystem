@@ -45,6 +45,7 @@ class SolidParametricJobs(ParametricJobs):
                     tempmacro.write(self.solidsim_inputmacro)
                 inputmacro = tempmacro.name
 
+            # pylint: disable=bad-option-value,bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("mac.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
@@ -69,7 +70,8 @@ class SolidParametricJobs(ParametricJobs):
                 else:
                     inputdata_lfns = []
                 inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
-                job.setName("SoLid_{name}%(argjn)s".format(
+                job.setName("SoLid_{request!s}.{job!s}_{name}%(argjn)s".format(
+                    request=self.request_id, job=self.id,
                     name={'atm-n': 'N_', 'muons': 'mu_'}.get(self.solidsim_inputfiletype, '')))
                 job.setPlatform('EL7')
                 job.setDestination(['LCG.UKI-LT2-IC-HEP.uk', 'LCG.UKI-NORTHGRID-MAN-HEP.uk',
@@ -109,6 +111,7 @@ class SolidParametricJobs(ParametricJobs):
                                   'december2017-baselines.root'
                 self.runNumber = 1010000  # pylint: disable=attribute-defined-outside-init
 
+            # pylint: disable=bad-option-value,bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("rosim.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
@@ -145,7 +148,8 @@ class SolidParametricJobs(ParametricJobs):
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             # self.num_jobs = len(inputdata_filenames)
 
-            job.setName("SoLid_ro_%(jobno)s")
+            job.setName("SoLid_{request!s}.{job!s}_ro_%(jobno)s".format(
+                request=self.request_id, job=self.id))
             job.setExecutable(os.path.basename(tmp_runscript.name),
                               arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('EL7')
@@ -169,6 +173,7 @@ class SolidParametricJobs(ParametricJobs):
 
             analysis_output_lfndir = self.analysis_output_lfndir.format(day=self.day.replace("-",
                                                                                              "_"))
+            # pylint: disable=bad-option-value,bad-string-format-type
             runscript_template = jinja2.Environment(loader=jinja2.PackageLoader("solid"))\
                                        .get_template("runscript.sh")\
                                        .render(id='%d.%d' % (self.request_id, self.id),  # pylint: disable=bad-option-value,bad-string-format-type
@@ -209,7 +214,8 @@ class SolidParametricJobs(ParametricJobs):
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
             # self.num_jobs = len(inputdata_filenames)
 
-            job.setName("SoLid_data_%(jobno)s")
+            job.setName("SoLid_{request!s}.{job!s}_data_%(jobno)s".format(
+                request=self.request_id, job=self.id))
             job.setExecutable(os.path.basename(tmp_runscript.name),
                               arguments='%(jobno)s %(inputdata_filename)s')
             job.setPlatform('ANY')
