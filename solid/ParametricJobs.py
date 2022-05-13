@@ -7,6 +7,7 @@ from sqlalchemy import Integer, TEXT
 from productionsystem.sql.SQLTableBase import SmartColumn
 from productionsystem.sql.models.ParametricJobs import ParametricJobs
 from productionsystem.monitoring.diracrpc.DiracRPCClient import dirac_rpc_client
+from solid.file_list import ignore_list
 
 
 class SolidParametricJobs(ParametricJobs):
@@ -203,12 +204,13 @@ class SolidParametricJobs(ParametricJobs):
             # subdirs = dir_content['Value']['Successful'][directory_path]['SubDirs']
             files = dir_content['Value']['Successful'][directory_path]['Files']
 
-            inputdata_lfns = []
+            inputdata_lfns = set()
             for filename in files.keys():
                 if not filename.endswith('.sbf.bz2') and (filename + '.bz2') in files:
                     continue
     #            inputdata_lfns.append("LFN:%s" % os.path.join(directory_path, filename))
-                inputdata_lfns.append(os.path.join(directory_path, filename))
+                inputdata_lfns.add(os.path.join(directory_path, filename))
+            inputdata_lfns.difference_update(ignore_list)
 
             job_numbers = range(len(inputdata_lfns))
             inputdata_filenames = [os.path.basename(lfn) for lfn in inputdata_lfns]
