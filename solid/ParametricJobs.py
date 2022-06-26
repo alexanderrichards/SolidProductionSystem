@@ -7,6 +7,7 @@ from sqlalchemy import Integer, TEXT
 from productionsystem.sql.SQLTableBase import SmartColumn
 from productionsystem.sql.models.ParametricJobs import ParametricJobs
 from productionsystem.monitoring.diracrpc.DiracRPCClient import dirac_rpc_client
+from solid.file_list import ignore_list
 
 
 class SolidParametricJobs(ParametricJobs):
